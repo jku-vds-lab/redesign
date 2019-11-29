@@ -18,8 +18,4 @@ __pycache__/
 .tox
 .cache
 node_modules/
-/src/**/*.js
-/tests/**/*.js
-*.map
-*.css
 /.cache-loader
