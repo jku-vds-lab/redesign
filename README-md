@@ -1,0 +1,10 @@
+
+# Prerequisites
+
+* Node: https://nodejs.org/
+
+# Usage
+
+1. Clone git repo: `git clone ...`
+2. `cd` into folder
+3. `npm install`
