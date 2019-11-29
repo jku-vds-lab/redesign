@@ -6,6 +6,8 @@
     "jsx": "react",
     "sourceMap": true,
     "noImplicitAny": false,
-    "allowJs": true
+    "allowJs": true,
+    "moduleResolution": "node",
+    "importHelpers": true
   }
 }
