@@ -28,13 +28,13 @@ const runDraco = async () => {
     encoding(e1).
     :- not field(e1,"Horsepower").
   `)
-  console.log(result.result.Time.Solve)
+  console.log(result)
 }
 
  runDraco();
 
 embed('#vega', {
-  "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+  "$schema": "https://vega.github.io/schema/vega-lite/v4.0.0-beta.12.json",
   "description": "A scatterplot showing horsepower and miles per gallons for various cars.",
   "data": {"url": "https://vega.github.io/editor/data/cars.json"},
   "mark": "point",
