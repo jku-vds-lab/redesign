@@ -1,0 +1,7 @@
+
+$header-color: magenta; // Sass variable: https://sass-lang.com/guide
+
+h1 {
+  color: $header-color;
+  border-bottom: 5px solid $header-color;
+}
