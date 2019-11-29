@@ -1,3 +1,6 @@
+// Taken from : https://webpack.js.org/guides/typescript/
+// plus:  https://github.com/webpack-contrib/sass-loader
+
 const path = require('path');
 
 module.exports = {

@@ -7,7 +7,7 @@
     "sourceMap": true,
     "noImplicitAny": false,
     "allowJs": true,
-    "moduleResolution": "node",
+    "moduleResolution": "node", // find node modules (e.g. bla-lib) when writing "import bla from 'bla-lib';"
     "importHelpers": true
   }
 }
