@@ -1,5 +1,6 @@
 import './style.scss'; // import styles as described https://github.com/webpack-contrib/sass-loader
 import Draco from 'draco-vis';
+import embed from 'vega-embed';
 
 document.title = 'Redesign';
 document.getElementById('heading').textContent = 'Hello World!'
@@ -30,4 +31,15 @@ const runDraco = async () => {
   console.log(result.result.Time.Solve)
 }
 
-runDraco();
+// runDraco();
+
+embed('#vega', {
+  "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+  "description": "A scatterplot showing horsepower and miles per gallons for various cars.",
+  "data": {"url": "https://vega.github.io/editor/data/cars.json"},
+  "mark": "point",
+  "encoding": {
+    "x": {"field": "Horsepower", "type": "quantitative"},
+    "y": {"field": "Miles_per_Gallon", "type": "quantitative"}
+  }
+});
