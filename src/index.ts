@@ -31,7 +31,7 @@ const runDraco = async () => {
   console.log(result.result.Time.Solve)
 }
 
-// runDraco();
+ runDraco();
 
 embed('#vega', {
   "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
