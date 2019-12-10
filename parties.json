@@ -1,0 +1,26 @@
+[
+	{
+		"party": "Union",
+		"count": 101
+	},
+	{
+		"party": "SPD",
+		"count": 100
+	},
+	{
+		"party": "AfD",
+		"count": 93
+	},
+	{
+		"party": "FDP",
+		"count": 103
+	},
+	{
+		"party": "Linke",
+		"count": 105
+	},
+	{
+		"party": "Grüne",
+		"count": 99
+	}
+]

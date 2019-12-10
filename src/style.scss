@@ -1,7 +1,15 @@
 
-$header-color: seagreen; // Sass variable: https://sass-lang.com/guide
+$header-color: rgb(0, 0, 0); // Sass variable: https://sass-lang.com/guide
 
 h1 {
   color: $header-color;
   border-bottom: 5px solid $header-color;
+}
+.container {
+  margin: 0 auto;
+  padding: 20px;
+  background: #ffffff;
+  width: 350px;
+  display:inline-block;
+  vertical-align:top;
 }
