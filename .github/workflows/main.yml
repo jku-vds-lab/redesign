@@ -30,7 +30,10 @@ jobs:
 
       -
         name: copy index.html to deploy folder (./dist)
-        run: cp index.html ./dist/
+        run: |
+          cp index.html ./dist/
+          cp cars.json ./dist/
+          cp parties.json ./dist/
 
       - 
         name: Deploy to GitHub Pages
