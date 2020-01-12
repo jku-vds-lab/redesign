@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --inline",
     "compile": "tsc",
-    "build": "webpack --env prod"
+    "build": "webpack --mode production --env prod"
   },
   "author": "",
   "license": "ISC",
