@@ -4,7 +4,8 @@ import embed from 'vega-embed';
 
 document.title = 'Redesign';
 document.getElementById('heading').textContent = 'Draco Testbench';
-document.getElementById("draco_query").value = ` % ====== Data definitions ======
+const dracoQuery: HTMLTextAreaElement = (document.getElementById("draco_query") as HTMLTextAreaElement)
+dracoQuery.value = ` % ====== Data definitions ======
 data("parties.json").
 num_rows(6).
 
@@ -28,7 +29,7 @@ const runDraco = async () => {
   const draco = await (new Draco()).init()
   console.log(draco);
  // console.log(">>>",document.getElementById("draco_query").textContent);
-  const result = draco.solve(document.getElementById("draco_query").value);
+  const result = draco.solve(dracoQuery.value);
   console.log("SOLVED!>",result);
   let softCons = "";
   for (let i=0; i<(result.models[0].violations).length; i++){
