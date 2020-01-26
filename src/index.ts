@@ -21,8 +21,28 @@ encoding(e0).
 
 encoding(e1).
 :- not field(e1,"party").`;
-console.log('test0')
+let draco_instance: Draco;
+const init_draco = async () => {
+  draco_instance = await (new Draco().init());
+  (document.getElementById('draco_reason') as HTMLButtonElement).disabled = false;
+} 
 
+const reason_plot = () => {
+  const result = draco_instance.solve((document.getElementById("draco_query") as HTMLTextAreaElement).value);
+  console.log("Specification solved: ",result);
+  let softCons = "";
+  for (let i=0; i<(result.models[0].violations).length; i++){
+    let curViolation = result.models[0].violations[i];
+    softCons += curViolation.description + " weight: " + curViolation.weight + "<br>";
+  }
+  document.getElementById('soft_con').innerHTML = softCons;
+  embed('#vega',result.specs[0]);
+}
+
+document.getElementById('draco_reason').addEventListener("click", reason_plot);
+init_draco();
+console.log('this is brushed')
+/*
 const runDraco = async () => {
   console.log('RunDraco')
   // initialize draco with the clingo webassembly module
