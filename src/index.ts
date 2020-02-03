@@ -22,10 +22,30 @@ encoding(e0).
 encoding(e1).
 :- not field(e1,"party").`;
 let draco_instance: Draco;
+let dataOptions: string | any[];
+
 const init_draco = async () => {
   draco_instance = await (new Draco().init());
+  let dataSelector = (document.getElementById('selectData') as HTMLSelectElement);
+
+  dataOptions = ["---","cars.csv", "parties.csv"];
+  
+  console.log(dataOptions);
+  for (let i = 0; i < dataOptions.length; i++){
+    let option = document.createElement("option");
+    option.text = dataOptions[i];
+    dataSelector.add(option);
+  }
+
+  dataSelector.addEventListener("change", function(){console.log(dataSelector.selectedIndex)});
+
+  dataSelector.disabled = false;
   (document.getElementById('draco_reason') as HTMLButtonElement).disabled = false;
 } 
+
+const readCSVasJSON = () => {
+  
+}
 
 const reason_plot = () => {
   const result = draco_instance.solve((document.getElementById("draco_query") as HTMLTextAreaElement).value);
