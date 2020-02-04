@@ -2,8 +2,6 @@ import './style.scss'; // import styles as described https://github.com/webpack-
 import Draco from 'draco-vis';
 import embed from 'vega-embed';
 import * as d3_fetch from 'd3-fetch';
-import { Dict } from 'vega-lite/build/src/util';
-import { JsonDataFormat } from 'vega-lite/build/src/data';
 
 
 document.title = 'Redesign';
@@ -27,7 +25,13 @@ encoding(e1).
 :- not field(e1,"party").`;
 let draco_instance: Draco;
 let dataOptions: string | any[];
-let data;
+
+let data: any[];
+let currentFields: string | any[];
+let dataSummary: any;
+let dataSetIndex = 0;
+
+let currentEncodings = {};
 
 const init_draco = async () => {
   draco_instance = await (new Draco().init());
@@ -35,7 +39,6 @@ const init_draco = async () => {
 
   dataOptions = ["---","cars.json", "parties.json"];
   
-  console.log(dataOptions);
   for (let i = 0; i < dataOptions.length; i++){
     let option = document.createElement("option");
     option.text = dataOptions[i];
@@ -48,15 +51,16 @@ const init_draco = async () => {
               console.log(dataSelector.selectedIndex, dataOptions[dataSelector.selectedIndex]);
               
               const newIndex = dataSelector.selectedIndex;
-              let res: any;
               clearFieldCheckBoxes();
               if (newIndex != 0){
                 fetch(dataOptions[dataSelector.selectedIndex])
                   .then(response => response.json())
                   .then(json => data = json).then( a => {
+                    dataSetIndex = newIndex;
                     draco_instance.prepareData(data);
-                    res = draco_instance.getSchema();
-                    setFieldCheckBoxes(res);
+                    dataSummary = draco_instance.getSchema();
+                    setFieldCheckBoxes();
+                    console.log(data);
                   }
                   );
                 }
@@ -76,6 +80,8 @@ const clearFieldCheckBoxes = () => {
   while (flds.firstChild) {
     flds.removeChild(flds.firstChild);
   }
+  currentFields = [];
+  dataSummary = [];
 }
 
 /*
@@ -83,25 +89,27 @@ Given a schema (Data summary, made by draco.prepareData, draco.getSchema)
 populates the 'fields' form with checkboxes, corresponding to the fields
 of the dataset;
 */
-const setFieldCheckBoxes = (schema: any) => {
+const setFieldCheckBoxes = () => {
   let flds = document.getElementById('fields');
-  let currentFields = Object.keys(schema.stats)
+  currentFields = Object.keys(dataSummary.stats)
 
-  console.log(draco_instance.getSchema().stats, currentFields);
+  console.log(dataSummary);
 
+  // Title of the form;
   flds.innerHTML = "Available fields:<br>";
+
   for(let i = 0; i < currentFields.length; i++){
+    // Creating checkbox with a unique ID;
     let box = document.createElement("INPUT");
     let box_id = "field_"+currentFields[i];
     box.setAttribute("type","checkbox");
     box.setAttribute("value", "0");
     box.setAttribute("id", box_id);
-
+    // Creating label for the box for usability;
     let label = document.createElement("LABEL");
-    //label.setAttribute("type", "label");
     label.setAttribute("for", box_id);
     label.innerHTML = " "+currentFields[i];
-
+    // Line break for structure;
     let br = document.createElement("br");
 
     flds.appendChild(box);
@@ -110,8 +118,53 @@ const setFieldCheckBoxes = (schema: any) => {
   }
 }
 
+/*
+Creating Draco specification based on boxes checked
+*/
+const generateDRACOSpecification = () => {
+  currentEncodings = {};
+  if (dataSetIndex == 0) {
+    console.error("attempt to generate specification for dataset with index 0 (index reserved)");
+    return;
+  }
+
+  let selectedFields = [];
+
+  let dracoSpec ="% == Data definitions ==\n";
+  dracoSpec += "data(\"" + dataOptions[dataSetIndex] + "\").\n";
+  dracoSpec += "num_rows(" + (dataSummary.size as string) + ").\n\n";
+  let e_index = 0;
+  for(let i = 0; i < currentFields.length; i++){
+    let box = (document.getElementById("field_"+currentFields[i]) as HTMLInputElement);
+    if (box.checked) {
+      const fieldName = currentFields[i];
+      const fieldCardinality = dataSummary.stats[fieldName].distinct as string;
+      const fieldType = dataSummary.stats[fieldName].type as string;
+      selectedFields.push(fieldName);
+
+      dracoSpec += "fieldtype(\""+fieldName+"\","+fieldType+").\n";
+      dracoSpec += "cardinality(\""+fieldName+"\","+fieldCardinality+").\n\n";
+      
+      currentEncodings["e"+(e_index as unknown as string)] = {"type":fieldType, "name":fieldName};
+      e_index++;
+    }
+  }
+  dracoSpec += "% == Query constraints==\n";
+
+  let encodings = Object.keys(currentEncodings);
+  for(let i = 0; i < encodings.length; i++) {
+    dracoSpec += "encoding(" + encodings[i] + ").\n"
+    dracoSpec += ":- not field(" + encodings[i] + ",\"" 
+                                 + currentEncodings[encodings[i]].name + "\").\n\n"
+  }
+  console.log(dracoSpec);
+  return dracoSpec;
+}
+
 const reason_plot = () => {
-  const result = draco_instance.solve((document.getElementById("draco_query") as HTMLTextAreaElement).value);
+  let spec = generateDRACOSpecification();
+  //const result = draco_instance.solve((document.getElementById("draco_query") as HTMLTextAreaElement).value);
+  const result = draco_instance.solve(spec);
   console.log("Specification solved: ",result);
   let softCons = "";
   for (let i=0; i<(result.models[0].violations).length; i++){
