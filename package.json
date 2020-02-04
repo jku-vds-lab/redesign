@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/d3-fetch": "^1.1.5",
     "css-loader": "^3.2.0",
     "node-sass": "^4.13.0",
     "sass-loader": "^8.0.0",
@@ -22,6 +23,7 @@
     "webpack-dev-server": "^3.9.0"
   },
   "dependencies": {
+    "d3-fetch": "^1.1.2",
     "draco-vis": "latest",
     "vega-embed": "^6.x",
     "vega-lite": "^3.x"
