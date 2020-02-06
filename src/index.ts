@@ -32,6 +32,7 @@ let dataSummary: any;
 let dataSetIndex = 0;
 
 let currentEncodings = {};
+let currentViolationsSummary: {};
 
 const init_draco = async () => {
   draco_instance = await (new Draco().init());
@@ -161,6 +162,8 @@ const generateDRACOSpecification = () => {
   return dracoSpec;
 }
 
+
+
 const reason_plot = () => {
   let spec = generateDRACOSpecification();
   //const result = draco_instance.solve((document.getElementById("draco_query") as HTMLTextAreaElement).value);
@@ -171,13 +174,57 @@ const reason_plot = () => {
     let curViolation = result.models[0].violations[i];
     softCons += curViolation.description + " weight: " + curViolation.weight + "<br>";
   }
-  document.getElementById('soft_con').innerHTML = softCons;
-  embed('#vega',result.specs[0]);
+  formatRules(result);
+  let sortedViolations = displayViolations(false);
+  //document.getElementById('soft_con').innerHTML = softCons;
+  document.getElementById('soft_con').innerHTML = sortedViolations;
+  embed('#vega',result.specs [0]);
+}
+/* 
+Gather Violations
+*/
+const formatRules = (dracoOut :  any) => {
+  let sortedViolatons = {};
+  let enc_list = Object.keys(currentEncodings);
+  enc_list.push("other");
+  currentEncodings["other"] = {"type":"unknown", "name":"other"};
+  for (let i=0; i<(enc_list).length; i++){
+    sortedViolatons[enc_list[i]] = new Array;
+  }
+  for (let i=0; i<(dracoOut.models[0].violations).length; i++){
+    let curViolation = dracoOut.models[0].violations[i];
+    let curEncoding = ((curViolation.witness as string).match(/,(.*)\)/)[1] as string);
+    if (!enc_list.includes(curEncoding)) {
+      curEncoding = "other";
+    }
+    sortedViolatons[curEncoding].push({ desc: (curViolation.description as string),
+                                        weight: (curViolation.weight as number)});
+  }
+  currentViolationsSummary = sortedViolatons;
+  return(sortedViolatons);
+}
+/*
+Display Violations
+*/
+const displayViolations = (zeros: boolean = true) => {
+let headers = Object.keys(currentViolationsSummary);
+let resHTML = "";
+for(let i=0; i<headers.length ; i++){
+  let curEncoding = headers[i] as string;
+  let violations = currentViolationsSummary[curEncoding];
+  if (violations.length < 1) continue;
+  resHTML += "<h3>" + "field " + currentEncodings[curEncoding]["name"] + ":</h3><ul>"
+  for (let j=0; j<violations.length; j++){
+    if ((violations[j].weight == 0) && !zeros) continue;
+    resHTML += "<li> " + violations[j]["desc"] + "[" + violations[j].weight +"];</li>";
+  }
+  resHTML += "</ul>";
+}
+return resHTML;
 }
 
 document.getElementById('draco_reason').addEventListener("click", reason_plot);
 init_draco();
-console.log('this is brushed')
 
 /*embed('#vega', {
   "$schema": "https://vega.github.io/schema/vega-lite/v4.0.0-beta.12.json",
