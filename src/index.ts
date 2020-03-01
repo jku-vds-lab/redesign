@@ -6,23 +6,6 @@ import * as d3_fetch from 'd3-fetch';
 
 document.title = 'Redesign';
 document.getElementById('heading').textContent = 'Draco Testbench';
-const dracoQuery: HTMLTextAreaElement = (document.getElementById("draco_query") as HTMLTextAreaElement)
-dracoQuery.value = ` % ====== Data definitions ======
-data("parties.json").
-num_rows(6).
-
-fieldtype("count",number).
-cardinality("count",6).
-
-fieldtype("party",string).
-cardinality("party",6).
-
-% ====== Query constraints ======
-encoding(e0).
-:- not field(e0,"count").
-
-encoding(e1).
-:- not field(e1,"party").`;
 let draco_instance: Draco;
 let dataOptions: string | any[];
 
@@ -167,7 +150,8 @@ const generateDRACOSpecification = () => {
 const reason_plot = () => {
   let spec = generateDRACOSpecification();
   //const result = draco_instance.solve((document.getElementById("draco_query") as HTMLTextAreaElement).value);
-  const result = draco_instance.solve(spec);
+  let number_of_models = (document.getElementById('n_models')as HTMLInputElement).value as unknown as number;
+  const result = draco_instance.solve(spec,{"models":number_of_models});
   console.log("Specification solved: ",result);
   let softCons = "";
   for (let i=0; i<(result.models[0].violations).length; i++){
@@ -177,8 +161,9 @@ const reason_plot = () => {
   formatRules(result);
   let sortedViolations = displayViolations(false);
   //document.getElementById('soft_con').innerHTML = softCons;
-  document.getElementById('soft_con').innerHTML = sortedViolations;
-  embed('#vega',result.specs [0]);
+  //document.getElementById('soft_con').innerHTML = sortedViolations;
+  embed('#vega_left',result.specs [0]);
+  embed('#vega_right',result.specs[result.specs.length-1]);
 }
 /* 
 Gather Violations
