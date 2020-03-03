@@ -24,3 +24,10 @@ h1 {
 .number_field {
   width: 15;
 }
+
+.vega_container {
+  max-width:380px;
+  max-height:250px;
+  overflow-y:scroll;
+  overflow-x:scroll;
+}
