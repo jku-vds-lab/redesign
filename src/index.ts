@@ -16,6 +16,7 @@ let dataSetIndex = 0;
 
 let currentEncodings = {};
 let currentViolationsSummary: {};
+let currentResult: any;
 
 const init_draco = async () => {
   draco_instance = await (new Draco().init());
@@ -159,12 +160,26 @@ const reason_plot = () => {
     softCons += curViolation.description + " weight: " + curViolation.weight + "<br>";
   }
   formatRules(result);
-  let sortedViolations = displayViolations(false);
+  //let sortedViolations = displayViolations(false);
   //document.getElementById('soft_con').innerHTML = softCons;
   //document.getElementById('soft_con').innerHTML = sortedViolations;
-  embed('#vega_left',result.specs [0]);
-  embed('#vega_right',result.specs[result.specs.length-1]);
+  currentResult = result;
+  updateLeft();
+  updateRight();
 }
+/* VEGA */
+const updateLeft = () => {
+  let index = (document.getElementById("index_left")as HTMLInputElement).value as unknown as number;
+  embed('#vega_left',currentResult.specs [index]);
+  document.getElementById('vis_left_header').innerHTML = "Vis #"+ index as string + "; Weight: " + currentResult.models[index].costs as string;
+}
+const updateRight = () => {
+  let index = (document.getElementById("index_right")as HTMLInputElement).value as unknown as number;
+  embed('#vega_right',currentResult.specs [index]);
+  document.getElementById('vis_right_header').innerHTML = "Vis #"+ index as string + "; Weight: " + currentResult.models[index].costs as string;
+
+}
+
 /* 
 Gather Violations
 */
@@ -210,6 +225,8 @@ return resHTML;
 
 document.getElementById('draco_reason').addEventListener("click", reason_plot);
 init_draco();
+document.getElementById('index_left').addEventListener("change", updateLeft);
+document.getElementById('index_right').addEventListener("change", updateRight);
 
 /*embed('#vega', {
   "$schema": "https://vega.github.io/schema/vega-lite/v4.0.0-beta.12.json",
