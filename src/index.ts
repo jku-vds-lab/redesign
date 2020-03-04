@@ -166,6 +166,8 @@ const reason_plot = () => {
   currentResult = result;
   updateLeft();
   updateRight();
+  (document.getElementById("index_left")as HTMLInputElement).max = (number_of_models - 1) as unknown as string ;
+  (document.getElementById("index_right")as HTMLInputElement).max = (number_of_models - 1) as unknown as string ;
 }
 /* VEGA */
 const updateLeft = () => {
