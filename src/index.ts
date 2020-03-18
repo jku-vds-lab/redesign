@@ -2,6 +2,7 @@ import './style.scss'; // import styles as described https://github.com/webpack-
 import Draco from 'draco-vis';
 import embed from 'vega-embed';
 import * as d3_fetch from 'd3-fetch';
+import {costsDict} from './costsDictionary';
 
 
 document.title = 'Redesign';
@@ -17,6 +18,8 @@ let dataSetIndex = 0;
 let currentEncodings = {};
 let currentViolationsSummary: {};
 let currentResult: any;
+
+let currentVectors = [];
 
 const init_draco = async () => {
   draco_instance = await (new Draco().init());
@@ -146,24 +149,21 @@ const generateDRACOSpecification = () => {
   return dracoSpec;
 }
 
-
-
 const reason_plot = () => {
   let spec = generateDRACOSpecification();
   //const result = draco_instance.solve((document.getElementById("draco_query") as HTMLTextAreaElement).value);
   let number_of_models = (document.getElementById('n_models')as HTMLInputElement).value as unknown as number;
-  const result = draco_instance.solve(spec,{"models":number_of_models});
-  console.log("Specification solved: ",result);
+  currentResult = draco_instance.solve(spec,{"models":number_of_models});
+  console.log("Specification solved: ",currentResult);
   let softCons = "";
-  for (let i=0; i<(result.models[0].violations).length; i++){
-    let curViolation = result.models[0].violations[i];
+  for (let i=0; i<(currentResult.models[0].violations).length; i++){
+    let curViolation = currentResult.models[0].violations[i];
     softCons += curViolation.description + " weight: " + curViolation.weight + "<br>";
   }
-  formatRules(result);
+  formatRules(currentResult);
   //let sortedViolations = displayViolations(false);
   //document.getElementById('soft_con').innerHTML = softCons;
   //document.getElementById('soft_con').innerHTML = sortedViolations;
-  currentResult = result;
   updateLeft();
   updateRight();
   (document.getElementById("index_left")as HTMLInputElement).max = (number_of_models - 1) as unknown as string ;
@@ -179,7 +179,9 @@ const updateRight = () => {
   let index = (document.getElementById("index_right")as HTMLInputElement).value as unknown as number;
   embed('#vega_right',currentResult.specs [index]);
   document.getElementById('vis_right_header').innerHTML = "Vis #"+ index as string + "; Cost: " + currentResult.models[index].costs as string;
-
+  
+  /* exporting visual Embeddings */
+  exportVisualEmbeddings();
 }
 
 /* 
@@ -225,10 +227,68 @@ for(let i=0; i<headers.length ; i++){
 return resHTML;
 }
 
+const exportVisualEmbeddings = () => {
+  currentVectors = [];
+  const numberOfSelectedFields = Object.keys(currentEncodings).length - 1; // (-1 because of default <other> encoding)
+  const spaceCardinality = Object.keys(costsDict).length * (numberOfSelectedFields);
+  const enc_list = Object.keys(currentEncodings);
+  const violationsArray = Object.keys(costsDict);
+  console.log("Vector Space Cardinality (#soft constraints times #number of fields): ",spaceCardinality);
+  console.log("Number of fields selected: ", numberOfSelectedFields, enc_list);
+  /*
+  === Clarification! ===
+  currentEncodings - contains mapping from data fields to encodings (entities representing data on screen)
+  encodings are e0, e1, ... how many? exactly how many fields have been selected;
+  there is also a special "encoding" <other> which is an artificial entity for easier sorting of violations
+  (for violations which do not relate to an encoding, but to the whole plot);
+  we do not consider <other> for building a feature vector. In our vector we have one element for each
+  combintaion: {violation_i + encoding_j};
+  this means that if we have 2 encodings (or fields selected) for violation with number k,
+  that is applied to the whole plot, we will have 2 identical values in our vector, one for each encoding;
+  */  
+  if (currentResult.models.length > 1000) {
+    alert("Prevented attempted to produce more than 1000 vector embeddings. Remove this restriction in the code.");
+    return;
+  }
+  currentResult.models.forEach((model: { violations: any[]; }) => {
+    let curVector = new Array(spaceCardinality).fill(0);
+    model.violations.forEach(violation => {
+      console.log(violation.name);
+      // figure violation index
+      const violationIndex = violationsArray.lastIndexOf(violation["name"]+"_weight");
+      console.log("V-IDX",violationIndex);
+      // figure encoding index
+      let curEncoding = ((violation.witness as string).match(/,(.*)\)/)[1] as string);
+      let encodingIndices = [];
+      if (!enc_list.includes(curEncoding)) {
+        console.log("multiple", numberOfSelectedFields);
+        for(let i = 0; i < numberOfSelectedFields; i++){
+          encodingIndices.push(i);
+        }
+      }
+      else {
+        encodingIndices.push(+curEncoding.substring(1));
+      }
+      // figure cost of violation
+      const cost = costsDict[violation.name + "_weight"];
+      encodingIndices.forEach(index => {
+        curVector[index * (Object.keys(costsDict).length) + violationIndex] = cost;
+        console.log(index * (Object.keys(costsDict).length) + violationIndex);
+      })
+    });
+    currentVectors.push(curVector);
+    console.log(curVector);
+    const arrSum = arr => arr.reduce((a,b) => a + b, 0)
+    const check_cost = arrSum(curVector);
+    console.log(check_cost);
+  });
+} 
+
 document.getElementById('draco_reason').addEventListener("click", reason_plot);
-init_draco();
 document.getElementById('index_left').addEventListener("change", updateLeft);
 document.getElementById('index_right').addEventListener("change", updateRight);
+
+init_draco();
 
 /*embed('#vega', {
   "$schema": "https://vega.github.io/schema/vega-lite/v4.0.0-beta.12.json",
