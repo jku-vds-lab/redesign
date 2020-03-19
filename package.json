@@ -26,6 +26,7 @@
     "d3-fetch": "^1.1.2",
     "draco-vis": "latest",
     "file-system": "^2.2.2",
+    "fs": "0.0.1-security",
     "vega-embed": "^6.x",
     "vega-lite": "^3.x"
   }

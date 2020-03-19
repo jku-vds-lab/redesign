@@ -3,6 +3,7 @@ import Draco from 'draco-vis';
 import embed from 'vega-embed';
 import * as d3_fetch from 'd3-fetch';
 import {costsDict} from './costsDictionary';
+import * as file_sys from 'fs';
 
 
 document.title = 'Redesign';
@@ -278,6 +279,9 @@ const exportVisualEmbeddings = () => {
     console.log(arrSum(curVector));
   });
   console.log(currentVectors);
+  file_sys.writeFile("vectors.txt", currentVectors,(err) => {
+    if (err) console.log(err);
+    console.log("Successfully Written to File.")});
 } 
 
 document.getElementById('draco_reason').addEventListener("click", reason_plot);
