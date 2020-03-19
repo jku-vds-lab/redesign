@@ -253,15 +253,12 @@ const exportVisualEmbeddings = () => {
   currentResult.models.forEach((model: { violations: any[]; }) => {
     let curVector = new Array(spaceCardinality).fill(0);
     model.violations.forEach(violation => {
-      console.log(violation.name);
       // figure violation index
       const violationIndex = violationsArray.lastIndexOf(violation["name"]+"_weight");
-      console.log("V-IDX",violationIndex);
       // figure encoding index
       let curEncoding = ((violation.witness as string).match(/,(.*)\)/)[1] as string);
       let encodingIndices = [];
       if (!enc_list.includes(curEncoding)) {
-        console.log("multiple", numberOfSelectedFields);
         for(let i = 0; i < numberOfSelectedFields; i++){
           encodingIndices.push(i);
         }
@@ -273,15 +270,14 @@ const exportVisualEmbeddings = () => {
       const cost = costsDict[violation.name + "_weight"];
       encodingIndices.forEach(index => {
         curVector[index * (Object.keys(costsDict).length) + violationIndex] = cost;
-        console.log(index * (Object.keys(costsDict).length) + violationIndex);
       })
     });
     currentVectors.push(curVector);
     console.log(curVector);
     const arrSum = arr => arr.reduce((a,b) => a + b, 0)
-    const check_cost = arrSum(curVector);
-    console.log(check_cost);
+    console.log(arrSum(curVector));
   });
+  console.log(currentVectors);
 } 
 
 document.getElementById('draco_reason').addEventListener("click", reason_plot);
