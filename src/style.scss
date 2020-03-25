@@ -35,3 +35,10 @@ h1 {
   background-color: #d88d80;
   width: 90px;
 }
+
+.tooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
+}

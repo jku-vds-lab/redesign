@@ -1,10 +1,9 @@
 import './style.scss'; // import styles as described https://github.com/webpack-contrib/sass-loader
 import Draco from 'draco-vis';
 import embed from 'vega-embed';
-import * as d3_fetch from 'd3-fetch';
 import {costsDict} from './costsDictionary';
-import * as file_sys from 'fs';
-
+import * as tsnejs from './tsne';
+import * as d3 from 'd3';
 
 document.title = 'Redesign';
 document.getElementById('heading').textContent = 'Draco Testbench';
@@ -21,6 +20,8 @@ let currentViolationsSummary: {};
 let currentResult: any;
 
 let currentVectors = [];
+
+const arrSum = arr => arr.reduce((a,b) => a + b, 0);
 
 const init_draco = async () => {
   draco_instance = await (new Draco().init());
@@ -268,21 +269,120 @@ const exportVisualEmbeddings = () => {
         encodingIndices.push(+curEncoding.substring(1));
       }
       // figure cost of violation
-      const cost = costsDict[violation.name + "_weight"];
+      const cost = +costsDict[violation.name + "_weight"];
       encodingIndices.forEach(index => {
         curVector[index * (Object.keys(costsDict).length) + violationIndex] = cost;
       })
     });
     currentVectors.push(curVector);
-    console.log(curVector);
-    const arrSum = arr => arr.reduce((a,b) => a + b, 0)
-    console.log(arrSum(curVector));
+    //console.log(curVector);
+    //console.log(arrSum(curVector));
   });
   console.log(currentVectors);
-  file_sys.writeFile("vectors.txt", currentVectors,(err) => {
-    if (err) console.log(err);
-    console.log("Successfully Written to File.")});
-} 
+  // T-SNE
+  const opt = {
+    "epsilon" : 10, // epsilon is learning rate (10 = default)
+    "perplexity" : 30, // roughly how many neighbors each point influences (30 = default)
+    "dim" : 2 // dimensionality of the embedding (2 = default)
+  };
+
+  let tsne = new tsnejs.tSNE(opt); // create a tSNE instance
+  tsne.initDataRaw(currentVectors);
+  for(let k = 0; k < 500; k++) {//!!!!
+    tsne.step(); // every time you call this, solution gets better
+  }
+  //
+  //
+  //
+  //
+  ///
+//
+  //
+  const Y0 = tsne.getSolution();
+  //Y = [[1,1], [2,5], [4,3], [1.5,1.5]];
+  ///
+
+  ///
+  //
+  //
+  //
+  //
+  console.log(Y0);
+  //ADDING COSTS TO T-SNE VECTOR OUTPUT
+  let Y = [];
+  for (let i=0; i<Y0.length; i++){
+    Y.push({"x":Y0[i][0],"y":Y0[i][1],"cost": currentResult.models[i].costs[0],"index":i});}
+  console.log(Y);
+
+
+  // plotting
+  const margin = {top: 30, right: 30, bottom: 30, left: 30};
+  const width = 250 - margin.left - margin.right;
+  const height = 250 - margin.top - margin.bottom;
+
+  d3.select("#t_sne_plot").select("svg").remove();
+  let svg = d3.select("#t_sne_plot")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+// setup x 
+    const maxX = d3.max(Y, function(d) { return +d.x;} );
+    const minX = d3.min(Y, function(d) { return +d.x;} );
+    let xScale = d3.scaleLinear()
+      .domain([minX,maxX])
+      .range([0,width]);
+    let xAxis = d3.axisTop(xScale);
+    const xMap = function(d) { return xScale(d.x);}
+
+    svg.append("g")
+      .attr("class", "x axis")
+      .call(xAxis)
+// setup y
+
+    const maxY = d3.max(Y, function(d) { return +d.y;} );
+    const minY = d3.min(Y, function(d) { return +d.y;} );
+    let yScale = d3.scaleLinear()
+      .domain([minY,maxY])
+      .range([0,height]);
+    let yAxis = d3.axisLeft(yScale);
+    const yMap = function(d) { return yScale(d.y);}
+
+    svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+      let tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+  svg.selectAll("circle")
+  .data(Y)
+  .enter()
+  .append("circle")
+  .attr("cx", xMap)
+  .attr("cy", yMap)
+  .attr("r", 4)
+  .attr("fill", "steelblue")
+  .on("mouseover", function(d) {
+    tooltip.transition()
+         .duration(200)
+         .style("opacity", .9);
+    tooltip.html("Cost: "+d.cost+"<br>Index: "+d.index)
+         .style("left", (d3.event.pageX + 5) + "px")
+         .style("top", (d3.event.pageY - 28) + "px");})
+  .on("mouseout", function(d) {
+    tooltip.transition()
+         .duration(500)
+         .style("opacity", 0);})
+  .on("click", function(d){
+    (document.getElementById("index_left")as HTMLInputElement).value = d.index as unknown as string;
+    updateLeft();
+  });
+//*/
+console.log("X:", minX, maxX,"\nY:",minY, maxY);
+}   
 
 document.getElementById('draco_reason').addEventListener("click", reason_plot);
 document.getElementById('index_left').addEventListener("change", updateLeft);
