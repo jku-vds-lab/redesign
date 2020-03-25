@@ -170,6 +170,8 @@ const reason_plot = () => {
   updateRight();
   (document.getElementById("index_left")as HTMLInputElement).max = (number_of_models - 1) as unknown as string ;
   (document.getElementById("index_right")as HTMLInputElement).max = (number_of_models - 1) as unknown as string ;
+  /* exporting visual Embeddings */
+  exportVisualEmbeddings();
 }
 /* VEGA */
 const updateLeft = () => {
@@ -181,9 +183,6 @@ const updateRight = () => {
   let index = (document.getElementById("index_right")as HTMLInputElement).value as unknown as number;
   embed('#vega_right',currentResult.specs [index]);
   document.getElementById('vis_right_header').innerHTML = "Vis #"+ index as string + "; Cost: " + currentResult.models[index].costs as string;
-  
-  /* exporting visual Embeddings */
-  exportVisualEmbeddings();
 }
 
 /* 
