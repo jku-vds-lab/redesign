@@ -5,8 +5,8 @@ import {costsDict} from './costsDictionary';
 import * as tsnejs from './tsne';
 import * as d3 from 'd3';
 
-document.title = 'Redesign';
-document.getElementById('heading').textContent = 'Draco Testbench';
+document.title = 'Graph Destroyer';
+document.getElementById('heading').textContent = 'Graph Destroyer';
 let draco_instance: Draco;
 let dataOptions: string | any[];
 
@@ -154,22 +154,19 @@ const generateDRACOSpecification = () => {
 const reason_plot = () => {
   let spec = generateDRACOSpecification();
   //const result = draco_instance.solve((document.getElementById("draco_query") as HTMLTextAreaElement).value);
-  let number_of_models = (document.getElementById('n_models')as HTMLInputElement).value as unknown as number;
+  //let number_of_models = (document.getElementById('n_models')as HTMLInputElement).value as unknown as number;
+  let number_of_models = 1;
   currentResult = draco_instance.solve(spec,{"models":number_of_models});
   console.log("Specification solved: ",currentResult);
-  let softCons = "";
-  for (let i=0; i<(currentResult.models[0].violations).length; i++){
-    let curViolation = currentResult.models[0].violations[i];
-    softCons += curViolation.description + " weight: " + curViolation.weight + "<br>";
-  }
-  formatRules(currentResult);
+  
+  //formatRules(currentResult);
   //let sortedViolations = displayViolations(false);
   //document.getElementById('soft_con').innerHTML = softCons;
   //document.getElementById('soft_con').innerHTML = sortedViolations;
-  updateLeft();
-  updateRight();
-  (document.getElementById("index_left")as HTMLInputElement).max = (number_of_models - 1) as unknown as string ;
-  (document.getElementById("index_right")as HTMLInputElement).max = (number_of_models - 1) as unknown as string ;
+  //updateLeft();
+  //updateRight();
+  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(currentResult.specs[0]);
+ // (document.getElementById("index_right")as HTMLInputElement).max = (number_of_models - 1) as unknown as string ;
   /* exporting visual Embeddings */
   exportVisualEmbeddings();
 }
@@ -180,9 +177,8 @@ const updateLeft = () => {
   document.getElementById('vis_left_header').innerHTML = "Vis #"+ index as string + "; Cost: " + currentResult.models[index].costs as string;
 }
 const updateRight = () => {
-  let index = (document.getElementById("index_right")as HTMLInputElement).value as unknown as number;
-  embed('#vega_right',currentResult.specs [index]);
-  document.getElementById('vis_right_header').innerHTML = "Vis #"+ index as string + "; Cost: " + currentResult.models[index].costs as string;
+  let spec = JSON.parse((document.getElementById("vega_spec")as HTMLInputElement).value);
+  embed('#vega_right',spec);
 }
 
 /* 
@@ -384,8 +380,9 @@ console.log("X:", minX, maxX,"\nY:",minY, maxY);
 }   
 
 document.getElementById('draco_reason').addEventListener("click", reason_plot);
-document.getElementById('index_left').addEventListener("change", updateLeft);
-document.getElementById('index_right').addEventListener("change", updateRight);
+document.getElementById('build_graph').addEventListener("click", updateRight);
+//document.getElementById('index_left').addEventListener("change", updateLeft);
+//document.getElementById('index_right').addEventListener("change", updateRight);
 
 init_draco();
 

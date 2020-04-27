@@ -7,65 +7,40 @@
 </head>
 
 <body id="body">
-    <h1 id="heading">replace me</h1>
-    <div id=data class="DRAcontainer">
-        <div>
-            <h2>Draco Specification</h2>
+    <div class="global_div">
+        <h1 id="heading">replace me</h1>
+        <div id=data class="DRAcontainer">
+            <div>
+                <h2>Generate Vega-Lite Spec</h2>
+            </div>
+            <div class="middle_container">
+                <label for="selectData">Select data set: </label>
+                <select id="selectData" disabled></select>
+                <form id="fields"></form>
+            </div>
+            <div>
+                <button id="draco_reason" class="run_button" disabled><b>Generate</b></button>
+            </div>
         </div>
-        <div>
-            <label for="selectData">Select data set: </label>
-            <select id="selectData" disabled>
-            </select>
+        <div class="DRAcontainer">
+            <div>
+                <h2>Edit Spec</h2>
+            </div>
+            <div class="middle_container">
+                <textarea id="vega_spec" class="vega_spec" rows="20" cols="40"></textarea>
+            </div>
+            <div>
+                <button id="build_graph" class="run_button"><b>Visualize</b></button>
+            </div>
         </div>
-        <div>
-            <form id="fields">
-
-            </form>
+        <div class="GRAPHcontainer">
+            <div>
+                <h2 id='vis_right_header'>Improve Your Graph</h2>
+            </div>
+            <div class="vega_container">
+                <div id="vega_right" ></div>
+            </div>
         </div>
-        <div>
-            <br>
-            <form>
-                <label for="n_models">Models to build:</label><br>
-                <input type="number" id="n_models" class="number_field" value=7 name="n_models" step="1">
-            </form>
-        </div>
-        <div>
-                <button id="draco_reason" class="run_button" disabled><b>Run Draco</b></button>
-        </div>
-    </div>
-    <div class="DRAcontainer">
-    <div>
-            <h2 id='vis_left_header'>Vis # ... Cost: ...</h2>
-    </div>
-    <div>
-        <form>
-            <label for="index_left">Vis index:</label>
-            <input type="number" id="index_left" class="number_field" value=0 step="1" min="0" max="1">
-        </form>
-    </div>
-    <div class="vega_container">
-    <div id="vega_left" ></div>
-    </div>
-    </div>
-    <div class="DRAcontainer">
-    <div>
-            <h2 id='vis_right_header'>Vis # ... Cost: ...</h2>
-    </div>
-    <div>
-        <form>
-            <label for="index_right">Vis index:</label>
-            <input type="number" id="index_right" class="number_field" value=1 step="1" min="0" max="1">
-        </form>
-    </div>
-    <div class="vega_container">
-    <div id="vega_right" ></div>
-    </div>
-    <div id="soft_con_box" >
-        <p id="soft_con"></p>
-    </div>
-    </div>
-    <div id=t_sne_plot>
-        
     </div>
     <!-- ------------------------------------------------------------------------------------ -->
     <script src="bundle.js"></script> <!-- bundle.js = filename assigned in webpack.config.js -->

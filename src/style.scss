@@ -1,28 +1,51 @@
 
 $header-color: rgb(0, 0, 0); // Sass variable: https://sass-lang.com/guide
+$text-color: rgb(215,215,215);
+$background-color: rgb(40,40,40);
 
 h1 {
-  color: $header-color;
-  border-bottom: 5px solid $header-color;
-}
-.container {
-  margin: 0 auto;
-  padding: 20px;
-  background: #ffffff;
-  width: 260px;
-  display:inline-block;
-  vertical-align:top;
-}
-.DRAcontainer {
-  margin: 0 auto;
-  padding: 20px;
-  background: #ffffff;
-  display:inline-block;
-  vertical-align:top;
+  color: $text-color;
+  border-bottom: 5px solid $text-color;
+  padding-bottom: 10px;
 }
 
-.number_field {
-  width: 15;
+body {
+  color: $text-color;
+  background: $background-color;
+}
+.global-div {
+  width: 80%;
+}
+.middle_container {
+  margin: 0 auto;
+  padding: 0px;
+  display:inline-block;
+  vertical-align:top;
+  height: 310px;
+}
+.DRAcontainer {
+  margin: auto;
+  padding-left: 30px;
+  display:inline-block;
+  vertical-align:top;
+  width: 250;
+}
+.GRAPHcontainer {
+  margin: auto;
+  padding-left: 30px;
+  display:inline-block;
+  vertical-align:top;
+  width: 600;
+}
+select {
+  background-color: rgb(70,70,70);
+  color: $text-color;
+  border: none;
+}
+textarea {
+  background-color: rgb(70,70,70);
+  color: $text-color;
+  border: none;
 }
 
 .vega_container {
@@ -32,8 +55,9 @@ h1 {
 }
 
 .run_button {
-  background-color: #d88d80;
+  background-color: #d98e81;
   width: 90px;
+  color: #440000
 }
 
 .tooltip {
