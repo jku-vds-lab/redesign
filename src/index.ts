@@ -27,7 +27,7 @@ const init_draco = async () => {
   draco_instance = await (new Draco().init());
   let dataSelector = (document.getElementById('selectData') as HTMLSelectElement);
 
-  dataOptions = ["---","cars.json", "parties.json"];
+  dataOptions = ["---","cars.json", "parties.json", "pokemon.json"];
   
   for (let i = 0; i < dataOptions.length; i++){
     let option = document.createElement("option");
