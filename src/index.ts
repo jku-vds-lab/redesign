@@ -196,6 +196,15 @@ const brightBackground = () => {
   updatePlot();
 }
 
+const neutralBackground = () => {
+  if (!curVegaSpec.hasOwnProperty("config")) {
+    curVegaSpec["config"] = {};
+  }
+  curVegaSpec["config"]["background"] = "lightgrey";
+  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
+  updatePlot();
+}
+
 const addStars = () => {
   if (!(curVegaSpec["mark"] == "text")) {
     if ((curVegaSpec["encoding"]["x"]["type"] == "nominal")
@@ -252,8 +261,10 @@ const cutAxis = () => {
 
 document.getElementById('draco_reason').addEventListener("click", reason_plot);
 document.getElementById('build_graph').addEventListener("click", updatePlot);
+
 document.getElementById('addGrid').addEventListener("click", addGrid);
 document.getElementById('brightBackground').addEventListener("click", brightBackground);
+document.getElementById('neutralBackground').addEventListener("click", neutralBackground);
 document.getElementById('addStars').addEventListener("click", addStars);
 document.getElementById('cutAxis').addEventListener("click", cutAxis);
 init_draco();
