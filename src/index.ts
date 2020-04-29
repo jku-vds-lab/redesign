@@ -14,6 +14,7 @@ let dataSetIndex = 0;
 
 let currentEncodings = {};
 let currentResult: any;
+let curVegaSpec: {};
 
 const arrSum = arr => arr.reduce((a,b) => a + b, 0);
 
@@ -150,18 +151,109 @@ const reason_plot = () => {
   let number_of_models = 1;
   currentResult = draco_instance.solve(spec,{"models":number_of_models});
   console.log("Specification solved: ",currentResult);
-
-  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(currentResult.specs[0]).replace(/,\"/g,",\n\"");
+  curVegaSpec = currentResult.specs[0];
+  //console.log(curVegaSpec);
+  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
   updatePlot();
 }
 /* VEGA */
 const updatePlot = () => {
   let spec = JSON.parse((document.getElementById("vega_spec")as HTMLInputElement).value);
+  curVegaSpec = spec;
   embed('#vega_right',spec);
 }
 
+const addGrid = () => {
+  let refresh = false;
+  if (curVegaSpec["encoding"].hasOwnProperty("x")) {
+    if (!curVegaSpec["encoding"]["x"].hasOwnProperty("axis")) {
+      curVegaSpec["encoding"]["x"]["axis"] = {};
+    }
+    curVegaSpec["encoding"]["x"]["axis"]["grid"] = true;
+    curVegaSpec["encoding"]["x"]["axis"]["gridColor"] = "red";
+    refresh = true;
+  }
+  if (curVegaSpec["encoding"].hasOwnProperty("y")) {
+    if (!curVegaSpec["encoding"]["y"].hasOwnProperty("axis")) {
+      curVegaSpec["encoding"]["y"]["axis"] = {};
+    }
+    curVegaSpec["encoding"]["y"]["axis"]["grid"] = true;
+    curVegaSpec["encoding"]["y"]["axis"]["gridColor"] = "red";
+    refresh = true;
+  }
+  if (refresh) {
+    (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
+    updatePlot();
+  }
+}
 
+const brightBackground = () => {
+  if (!curVegaSpec.hasOwnProperty("config")) {
+    curVegaSpec["config"] = {};
+  }
+  curVegaSpec["config"]["background"] = "cyan";
+  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
+  updatePlot();
+}
+
+const addStars = () => {
+  if (!(curVegaSpec["mark"] == "text")) {
+    if ((curVegaSpec["encoding"]["x"]["type"] == "nominal")
+    ||(curVegaSpec["encoding"]["x"]["type"] == "ordinal")
+    ||(curVegaSpec["encoding"]["y"]["type"] == "nominal")
+    ||(curVegaSpec["encoding"]["y"]["type"] == "ordinal")) {
+      curVegaSpec["mark"] = "text";
+      curVegaSpec["encoding"]["text"] = {};
+      console.log(curVegaSpec);
+      curVegaSpec["encoding"]["text"]["value"] = "⭐";
+    }
+    (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
+    updatePlot();
+  }
+}
+
+const cutAxis = () => {
+  let refresh = false;
+  if (curVegaSpec["encoding"].hasOwnProperty("y")) {
+    if ((curVegaSpec["encoding"]["y"].hasOwnProperty("field"))
+          &&(curVegaSpec["encoding"]["y"]["type"] == "quantitative")) {
+      const fld = curVegaSpec["encoding"]["y"]["field"];
+      const summary = draco_instance.getSchema();
+      console.log(summary);
+      const minVal = summary["stats"][fld]["min"];
+      const maxVal = summary["stats"][fld]["max"];
+      console.log(minVal,maxVal);
+      const marg = maxVal * 0.1;
+      curVegaSpec["encoding"]["y"]["scale"] = {};
+      curVegaSpec["encoding"]["y"]["scale"]["domain"] = [minVal - marg, maxVal + marg];
+      refresh = true;
+    }
+  }
+  if (curVegaSpec["encoding"].hasOwnProperty("x")) {
+    if ((curVegaSpec["encoding"]["x"].hasOwnProperty("field"))
+        &&(curVegaSpec["encoding"]["x"]["type"]== "quantitative")) {
+      const fld = curVegaSpec["encoding"]["x"]["field"];
+      const summary = draco_instance.getSchema();
+      console.log(summary);
+      const minVal = summary["stats"][fld]["min"];
+      const maxVal = summary["stats"][fld]["max"];
+      console.log(minVal,maxVal);
+      const marg = maxVal * 0.1;
+      curVegaSpec["encoding"]["x"]["scale"] = {};
+      curVegaSpec["encoding"]["x"]["scale"]["domain"] = [minVal - marg, maxVal + marg];
+      refresh = true;
+    }
+  }
+  if (refresh) {
+    (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
+    updatePlot();
+  }
+}
 
 document.getElementById('draco_reason').addEventListener("click", reason_plot);
 document.getElementById('build_graph').addEventListener("click", updatePlot);
+document.getElementById('addGrid').addEventListener("click", addGrid);
+document.getElementById('brightBackground').addEventListener("click", brightBackground);
+document.getElementById('addStars').addEventListener("click", addStars);
+document.getElementById('cutAxis').addEventListener("click", cutAxis);
 init_draco();
