@@ -22,15 +22,12 @@
                 <button id="draco_reason" class="run_button" disabled><b>Generate</b></button>
             </div>
         </div>
-        <div class="DRAcontainer">
+        <div class="GRAPHcontainer">
             <div>
-                <h2>Fine Tune</h2>
+                <h2 id='vis_right_header'>Improve Your Graph</h2>
             </div>
-            <div class="middle_container">
-                <textarea id="vega_spec" class="vega_spec" rows="20" cols="40"></textarea>
-            </div>
-            <div>
-                <button id="build_graph" class="run_button"><b>Visualize</b></button>
+            <div class="vega_container">
+                <div id="vega_right" ></div>
             </div>
         </div>
         <div class="DRAcontainer">
@@ -46,12 +43,15 @@
                 
             </div>
         </div>
-        <div class="GRAPHcontainer">
+        <div class="DRAcontainer">
             <div>
-                <h2 id='vis_right_header'>Improve Your Graph</h2>
+                <h2>Fine Tune</h2>
             </div>
-            <div class="vega_container">
-                <div id="vega_right" ></div>
+            <div class="middle_container">
+                <textarea id="vega_spec" class="vega_spec" rows="20" cols="35"></textarea>
+            </div>
+            <div>
+                <button id="build_graph" class="run_button"><b>Visualize</b></button>
             </div>
         </div>
     </div>

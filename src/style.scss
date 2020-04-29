@@ -26,17 +26,18 @@ body {
 }
 .DRAcontainer {
   margin: auto;
-  padding-left: 30px;
+  padding-left: 20px;
   display:inline-block;
   vertical-align:top;
-  width: 250;
+  width: 200;
 }
 .GRAPHcontainer {
   margin: auto;
-  padding-left: 30px;
+  padding-left: 20px;
   display:inline-block;
   vertical-align:top;
-  width: 600;
+  width: 500;
+  overflow-x: scroll;
 }
 select {
   background-color: rgb(70,70,70);
