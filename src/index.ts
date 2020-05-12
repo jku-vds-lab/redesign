@@ -15,6 +15,7 @@ let dataSetIndex = 0;
 let currentEncodings = {};
 let currentResult: any;
 let curVegaSpec: {};
+let specInit: {};
 
 const arrSum = arr => arr.reduce((a,b) => a + b, 0);
 
@@ -154,13 +155,20 @@ const reason_plot = () => {
   curVegaSpec = currentResult.specs[0];
   //console.log(curVegaSpec);
   (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-  updatePlot();
+  specInit = curVegaSpec;
+  updatePlot("vegaInit");
+  updatePlot("vegaWork");
 }
 /* VEGA */
-const updatePlot = () => {
-  let spec = JSON.parse((document.getElementById("vega_spec")as HTMLInputElement).value);
-  curVegaSpec = spec;
-  embed('#vega_right',spec);
+const updatePlot = (vegaId : string) => {
+  if (vegaId == "vegaInit") {
+    embed('#vegaInit',specInit,{theme: 'dark'});
+  }
+  else {
+    let spec = JSON.parse((document.getElementById("vega_spec")as HTMLInputElement).value);
+    curVegaSpec = spec;
+    embed('#'+vegaId,spec,{theme: 'dark'});
+  }
 }
 
 const addGrid = () => {
@@ -183,7 +191,7 @@ const addGrid = () => {
   }
   if (refresh) {
     (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-    updatePlot();
+    updatePlot("vegaWork");
   }
 }
 
@@ -193,7 +201,7 @@ const brightBackground = () => {
   }
   curVegaSpec["config"]["background"] = "cyan";
   (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-  updatePlot();
+  updatePlot("vegaWork");
 }
 
 const neutralBackground = () => {
@@ -202,7 +210,7 @@ const neutralBackground = () => {
   }
   curVegaSpec["config"]["background"] = "lightgrey";
   (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-  updatePlot();
+  updatePlot("vegaWork");
 }
 
 const addStars = () => {
@@ -217,7 +225,7 @@ const addStars = () => {
       curVegaSpec["encoding"]["text"]["value"] = "⭐";
     }
     (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-    updatePlot();
+    updatePlot("vegaWork");
   }
 }
 
@@ -255,12 +263,27 @@ const cutAxis = () => {
   }
   if (refresh) {
     (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-    updatePlot();
+    updatePlot("vegaWork");
   }
 }
+// Sidebar
+function openNav() {
+  document.getElementById("data").style.width = "450px";
+  document.getElementById("main").style.marginLeft = "450px";
+}
+
+/* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
+function closeNav() {
+  document.getElementById("data").style.width = "0";
+  document.getElementById("main").style.marginLeft = "0";
+}
+document.getElementById('openDataBtn').addEventListener("click", openNav);
+document.getElementById('closeDataBtn').addEventListener("click", closeNav);
+
+//
 
 document.getElementById('draco_reason').addEventListener("click", reason_plot);
-document.getElementById('build_graph').addEventListener("click", updatePlot);
+document.getElementById('build_graph').addEventListener("click", ()=>{updatePlot("vegaWork"); updatePlot("vegaInit")});
 
 document.getElementById('addGrid').addEventListener("click", addGrid);
 document.getElementById('brightBackground').addEventListener("click", brightBackground);

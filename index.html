@@ -9,7 +9,9 @@
 <body id="body">
     <div class="global_div">
         <h1 id="heading">replace me</h1>
-        <div id=data class="DRAcontainer">
+        <button class="openbtn" id="openDataBtn" onclick="openNav()">&#9776; Select Data and Initial Visualization</button>
+        <div id=data class="sidebar">
+            <a href="javascript:void(0)" class="closeDataBtn" id="closeDataBtn">&times;</a>
             <div>
                 <h2>Generate Vega-Lite Spec</h2>
             </div>
@@ -21,13 +23,22 @@
             <div>
                 <button id="draco_reason" class="run_button" disabled><b>Generate</b></button>
             </div>
+            <div>
+                <h2>Fine Tune</h2>
+            </div>
+            <div class="middle_container">
+                <textarea id="vega_spec" class="vega_spec" rows="20" cols="35"></textarea>
+            </div>
+            <div>
+                <button id="build_graph" class="run_button"><b>Visualize</b></button>
+            </div>
         </div>
         <div class="GRAPHcontainer">
             <div>
-                <h2 id='vis_right_header'>Improve Your Graph</h2>
+                <h2 id='vis_right_header'>Initial Graph</h2>
             </div>
             <div class="vega_container">
-                <div id="vega_right" ></div>
+                <div id="vegaInit" ></div>
             </div>
         </div>
         <div class="DRAcontainer">
@@ -43,15 +54,12 @@
                 
             </div>
         </div>
-        <div class="DRAcontainer">
+        <div class="GRAPHcontainer">
             <div>
-                <h2>Fine Tune</h2>
+                <h2 id='vis_right_header'>Improve Your Graph</h2>
             </div>
-            <div class="middle_container">
-                <textarea id="vega_spec" class="vega_spec" rows="20" cols="35"></textarea>
-            </div>
-            <div>
-                <button id="build_graph" class="run_button"><b>Visualize</b></button>
+            <div class="vega_container">
+                <div id="vegaWork" ></div>
             </div>
         </div>
     </div>

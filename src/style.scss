@@ -22,7 +22,7 @@ body {
   display:inline-block;
   vertical-align:top;
   height: 310px;
-  overflow: scroll;
+  overflow: auto;
 }
 .DRAcontainer {
   margin: auto;
@@ -37,7 +37,7 @@ body {
   display:inline-block;
   vertical-align:top;
   width: 500;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 select {
   background-color: rgb(70,70,70);
@@ -62,9 +62,23 @@ textarea {
   color: #440000
 }
 
-.tooltip {
+.sidebar {
+  height: 100%; /* 100% Full-height */
+  width: 0; /* 0 width - change this with JavaScript */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Stay on top */
+  top: 0;
+  left: 0;
+  background-color: #111; /* Black*/
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 60px; /* Place content 60px from the top */
+  transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+}
+
+.sidebar .closeDataBtn {
   position: absolute;
-  width: 200px;
-  height: 28px;
-  pointer-events: none;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
 }
