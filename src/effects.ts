@@ -1,12 +1,13 @@
 export class Effector {
-    initialSpec : {};
-    currentSpec : {};
-    effects : {}
+    private initialSpec : {};
+    private currentSpec : {};
+    private effects : {};
+    private draco_instance : any;
 
-    constructor(initialSpec : {}) {
+    constructor(initialSpec : {}, draco_inst : any) {
         this.initialSpec = JSON.parse(JSON.stringify(initialSpec));
         this.currentSpec = JSON.parse(JSON.stringify(initialSpec));
-
+        this.draco_instance = draco_inst;
         this.effects = {
                 "BrightBackground" : false,
                 "RedGrid" : false,
@@ -32,12 +33,22 @@ export class Effector {
 
     deactivateEffect(effect : string) {
         this.effects[effect] = false;
+        this.applyEffects()
     }
     // main function for applying effects
     private applyEffects() {
         this.currentSpec = JSON.parse(JSON.stringify(this.initialSpec));
         if (this.effects["RedGrid"]) {
             this.RedGrid();
+        }
+        if (this.effects["BrightBackground"]) {
+            this.BrightBackground();
+        }
+        if (this.effects["Stars"]) {
+            this.addStars();
+        }
+        if (this.effects["NoZero"]) {
+            this.noZero();
         }
     }
     // available effects
@@ -65,6 +76,58 @@ export class Effector {
          // (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
          // updatePlot("vegaWork");
             console.log("Red Grif applied, need to refresh the graph")
+        }
+      }
+      private BrightBackground() {
+        if (!this.currentSpec.hasOwnProperty("config")) {
+            this.currentSpec["config"] = {};
+        }
+        this.currentSpec["config"]["background"] = "#aa1111";
+      }
+      private addStars = () => {
+        if (!(this.currentSpec["mark"] == "text")) {
+          if ((this.currentSpec["encoding"]["x"]["type"] == "nominal")
+          ||(this.currentSpec["encoding"]["x"]["type"] == "ordinal")
+          ||(this.currentSpec["encoding"]["y"]["type"] == "nominal")
+          ||(this.currentSpec["encoding"]["y"]["type"] == "ordinal")) {
+            this.currentSpec["mark"] = "text";
+            this.currentSpec["encoding"]["text"] = {};
+            //console.log(this.currentSpec);
+            this.currentSpec["encoding"]["text"]["value"] = "⭐";
+          }
+        }
+      }
+      private noZero () {
+        let refresh = false;
+        if (this.currentSpec["encoding"].hasOwnProperty("y")) {
+          if ((this.currentSpec["encoding"]["y"].hasOwnProperty("field"))
+                &&(this.currentSpec["encoding"]["y"]["type"] == "quantitative")) {
+            const fld = this.currentSpec["encoding"]["y"]["field"];
+            const summary = this.draco_instance.getSchema();
+            console.log(summary);
+            const minVal = summary["stats"][fld]["min"];
+            const maxVal = summary["stats"][fld]["max"];
+            console.log(minVal,maxVal);
+            const marg = maxVal * 0.1;
+            this.currentSpec["encoding"]["y"]["scale"] = {};
+            this.currentSpec["encoding"]["y"]["scale"]["domain"] = [minVal - marg, maxVal + marg];
+            refresh = true;
+          }
+        }
+        if (this.currentSpec["encoding"].hasOwnProperty("x")) {
+          if ((this.currentSpec["encoding"]["x"].hasOwnProperty("field"))
+              &&(this.currentSpec["encoding"]["x"]["type"]== "quantitative")) {
+            const fld = this.currentSpec["encoding"]["x"]["field"];
+            const summary = this.draco_instance.getSchema();
+            console.log(summary);
+            const minVal = summary["stats"][fld]["min"];
+            const maxVal = summary["stats"][fld]["max"];
+            console.log(minVal,maxVal);
+            const marg = maxVal * 0.1 * 0.11;
+            this.currentSpec["encoding"]["x"]["scale"] = {};
+            this.currentSpec["encoding"]["x"]["scale"]["domain"] = [minVal - marg, maxVal - marg];
+            refresh = true;
+          }
         }
       }
 }

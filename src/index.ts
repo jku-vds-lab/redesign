@@ -154,7 +154,7 @@ const reason_plot = () => {
   //console.log(curVegaSpec);
   (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
   specInit = JSON.parse(JSON.stringify(curVegaSpec));
-  effector = new Effector(specInit);
+  effector = new Effector(specInit, draco_instance);
   updatePlot("vegaInit");
   updatePlot("vegaWork");
 }
@@ -187,9 +187,32 @@ document.getElementById('draco_reason').addEventListener("click", reason_plot);
 document.getElementById('build_graph').addEventListener("click", ()=>{updatePlot("vegaWork"); updatePlot("vegaInit")});
 
 
-document.getElementById('addGrid').addEventListener("click", gridClick);
+document.getElementById('RedGrid').addEventListener("click", gridClick);
+document.getElementById('BrightBackground').addEventListener("click", bgClick);
+document.getElementById('Stars').addEventListener("click", starClick);
+document.getElementById('NoZero').addEventListener("click", noZeroClick);
+
 function gridClick(){
-  effector.activateEffect("RedGrid");
+  if ((document.getElementById("RedGrid")as HTMLInputElement).checked) effector.activateEffect("RedGrid");
+  else effector.deactivateEffect("RedGrid");
+  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(effector.getCurrentSpec()).replace(/,\"/g,",\n\"");
+  updatePlot("vegaWork");
+}
+function bgClick(){
+  if ((document.getElementById("BrightBackground")as HTMLInputElement).checked) effector.activateEffect("BrightBackground");
+  else effector.deactivateEffect("BrightBackground");
+  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(effector.getCurrentSpec()).replace(/,\"/g,",\n\"");
+  updatePlot("vegaWork");
+}
+function starClick(){
+  if ((document.getElementById("Stars")as HTMLInputElement).checked) effector.activateEffect("Stars");
+  else effector.deactivateEffect("Stars");
+  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(effector.getCurrentSpec()).replace(/,\"/g,",\n\"");
+  updatePlot("vegaWork");
+}
+function noZeroClick(){
+  if ((document.getElementById("NoZero")as HTMLInputElement).checked) effector.activateEffect("NoZero");
+  else effector.deactivateEffect("NoZero");
   (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(effector.getCurrentSpec()).replace(/,\"/g,",\n\"");
   updatePlot("vegaWork");
 }
