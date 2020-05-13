@@ -1,10 +1,14 @@
 import './style.scss'; // import styles as described https://github.com/webpack-contrib/sass-loader
+import {Effector} from './effects';
 import Draco from 'draco-vis';
 import embed from 'vega-embed';
 
 document.title = 'Graph Destroyer';
 document.getElementById('heading').textContent = 'Graph Destroyer';
+
 let draco_instance: Draco;
+let effector: Effector;
+
 let dataOptions: string | any[];
 
 let data: any[];
@@ -17,12 +21,9 @@ let currentResult: any;
 let curVegaSpec: {};
 let specInit: {};
 
-const arrSum = arr => arr.reduce((a,b) => a + b, 0);
-
 const init_draco = async () => {
   draco_instance = await (new Draco().init());
   let dataSelector = (document.getElementById('selectData') as HTMLSelectElement);
-
   dataOptions = ["---","cars.json", "parties.json", "pokemon.json"];
   
   for (let i = 0; i < dataOptions.length; i++){
@@ -152,7 +153,8 @@ const reason_plot = () => {
   curVegaSpec = currentResult.specs[0];
   //console.log(curVegaSpec);
   (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-  specInit = curVegaSpec;
+  specInit = JSON.parse(JSON.stringify(curVegaSpec));
+  effector = new Effector(specInit);
   updatePlot("vegaInit");
   updatePlot("vegaWork");
 }
@@ -165,93 +167,6 @@ const updatePlot = (vegaId : string) => {
     let spec = JSON.parse((document.getElementById("vega_spec")as HTMLInputElement).value);
     curVegaSpec = spec;
     embed('#'+vegaId,spec,{theme: 'dark'});
-  }
-}
-
-const addGrid = () => {
-  let refresh = false;
-  if (curVegaSpec["encoding"].hasOwnProperty("x")) {
-    if (!curVegaSpec["encoding"]["x"].hasOwnProperty("axis")) {
-      curVegaSpec["encoding"]["x"]["axis"] = {};
-    }
-    curVegaSpec["encoding"]["x"]["axis"]["grid"] = true;
-    curVegaSpec["encoding"]["x"]["axis"]["gridColor"] = "red";
-    refresh = true;
-  }
-  if (curVegaSpec["encoding"].hasOwnProperty("y")) {
-    if (!curVegaSpec["encoding"]["y"].hasOwnProperty("axis")) {
-      curVegaSpec["encoding"]["y"]["axis"] = {};
-    }
-    curVegaSpec["encoding"]["y"]["axis"]["grid"] = true;
-    curVegaSpec["encoding"]["y"]["axis"]["gridColor"] = "red";
-    refresh = true;
-  }
-  if (refresh) {
-    (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-    updatePlot("vegaWork");
-  }
-}
-
-const brightBackground = () => {
-  if (!curVegaSpec.hasOwnProperty("config")) {
-    curVegaSpec["config"] = {};
-  }
-  curVegaSpec["config"]["background"] = "#aa1111";
-  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-  updatePlot("vegaWork");
-}
-
-const addStars = () => {
-  if (!(curVegaSpec["mark"] == "text")) {
-    if ((curVegaSpec["encoding"]["x"]["type"] == "nominal")
-    ||(curVegaSpec["encoding"]["x"]["type"] == "ordinal")
-    ||(curVegaSpec["encoding"]["y"]["type"] == "nominal")
-    ||(curVegaSpec["encoding"]["y"]["type"] == "ordinal")) {
-      curVegaSpec["mark"] = "text";
-      curVegaSpec["encoding"]["text"] = {};
-      console.log(curVegaSpec);
-      curVegaSpec["encoding"]["text"]["value"] = "⭐";
-    }
-    (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-    updatePlot("vegaWork");
-  }
-}
-
-const cutAxis = () => {
-  let refresh = false;
-  if (curVegaSpec["encoding"].hasOwnProperty("y")) {
-    if ((curVegaSpec["encoding"]["y"].hasOwnProperty("field"))
-          &&(curVegaSpec["encoding"]["y"]["type"] == "quantitative")) {
-      const fld = curVegaSpec["encoding"]["y"]["field"];
-      const summary = draco_instance.getSchema();
-      console.log(summary);
-      const minVal = summary["stats"][fld]["min"];
-      const maxVal = summary["stats"][fld]["max"];
-      console.log(minVal,maxVal);
-      const marg = maxVal * 0.1;
-      curVegaSpec["encoding"]["y"]["scale"] = {};
-      curVegaSpec["encoding"]["y"]["scale"]["domain"] = [minVal - marg, maxVal + marg];
-      refresh = true;
-    }
-  }
-  if (curVegaSpec["encoding"].hasOwnProperty("x")) {
-    if ((curVegaSpec["encoding"]["x"].hasOwnProperty("field"))
-        &&(curVegaSpec["encoding"]["x"]["type"]== "quantitative")) {
-      const fld = curVegaSpec["encoding"]["x"]["field"];
-      const summary = draco_instance.getSchema();
-      console.log(summary);
-      const minVal = summary["stats"][fld]["min"];
-      const maxVal = summary["stats"][fld]["max"];
-      console.log(minVal,maxVal);
-      const marg = maxVal * 0.1;
-      curVegaSpec["encoding"]["x"]["scale"] = {};
-      curVegaSpec["encoding"]["x"]["scale"]["domain"] = [minVal - marg, maxVal + marg];
-      refresh = true;
-    }
-  }
-  if (refresh) {
-    (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-    updatePlot("vegaWork");
   }
 }
 // Sidebar
@@ -271,8 +186,16 @@ document.getElementById('closeDataBtn').addEventListener("click", closeNav);
 document.getElementById('draco_reason').addEventListener("click", reason_plot);
 document.getElementById('build_graph').addEventListener("click", ()=>{updatePlot("vegaWork"); updatePlot("vegaInit")});
 
-document.getElementById('addGrid').addEventListener("click", addGrid);
+
+document.getElementById('addGrid').addEventListener("click", gridClick);
+function gridClick(){
+  effector.activateEffect("RedGrid");
+  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(effector.getCurrentSpec()).replace(/,\"/g,",\n\"");
+  updatePlot("vegaWork");
+}
+/*
 document.getElementById('brightBackground').addEventListener("click", brightBackground);
 document.getElementById('addStars').addEventListener("click", addStars);
 document.getElementById('cutAxis').addEventListener("click", cutAxis);
+*/
 init_draco();
