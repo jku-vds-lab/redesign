@@ -58,12 +58,6 @@ textarea {
   overflow: auto;
 }
 
-.run_button {
-  background-color: #d98e81;
-  width: 90px;
-  color: #440000
-}
-
 .sidebar {
   height: 100%; /* 100% Full-height */
   width: 0; /* 0 width - change this with JavaScript */
@@ -75,10 +69,9 @@ textarea {
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
-  margin-left: 20px;
 }
 
-.openDataBtn {
+button {
   background-color: $text-color;
   border-radius: 4px;
 }
@@ -90,3 +83,13 @@ textarea {
   font-size: 36px;
   margin-left: 50px;
 }
+
+.sidebar a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: rgb(70,70,70);
+  display: block;
+  transition: 0.3s;
+}
+
