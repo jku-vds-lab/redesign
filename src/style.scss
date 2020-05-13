@@ -1,11 +1,11 @@
 
 $header-color: rgb(0, 0, 0); // Sass variable: https://sass-lang.com/guide
-$text-color: rgb(215,215,215);
+$text-color: rgb(245,245,245);
 $background-color: rgb(40,40,40);
 
 h1 {
   color: $text-color;
-  border-bottom: 5px solid $text-color;
+  border-bottom: 2px solid $text-color;
   padding-bottom: 10px;
 }
 
@@ -13,30 +13,32 @@ body {
   color: $text-color;
   background: $background-color;
 }
-.global-div {
-  width: 80%;
+
+.global_div {
+  margin: auto;
+  width: 95%;
 }
 .middle_container {
   margin: 0 auto;
   padding: 0px;
   display:inline-block;
   vertical-align:top;
-  height: 310px;
+  //max-height: 310px;
   overflow: auto;
+  margin-left: 20px;
 }
-.DRAcontainer {
-  margin: auto;
-  padding-left: 20px;
-  display:inline-block;
-  vertical-align:top;
-  width: 200;
+.fields_container {
+  max-height: 310px;
+  overflow: auto;
+  margin-left: 20px;
+  margin-bottom: 5px;
 }
-.GRAPHcontainer {
+.Container {
   margin: auto;
-  padding-left: 20px;
-  display:inline-block;
-  vertical-align:top;
-  width: 500;
+  //padding-left: 20px;
+  display : inline-block;
+  vertical-align : top;
+  min-width: 30%;
   overflow-x: auto;
 }
 select {
@@ -69,10 +71,16 @@ textarea {
   z-index: 1; /* Stay on top */
   top: 0;
   left: 0;
-  background-color: #111; /* Black*/
+  background-color: #303030; /* Black*/
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+  margin-left: 20px;
+}
+
+.openDataBtn {
+  background-color: $text-color;
+  border-radius: 4px;
 }
 
 .sidebar .closeDataBtn {

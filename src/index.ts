@@ -79,10 +79,7 @@ const setFieldCheckBoxes = () => {
   let flds = document.getElementById('fields');
   currentFields = Object.keys(dataSummary.stats)
 
-  console.log(dataSummary);
-
-  // Title of the form;
-  flds.innerHTML = "Available fields:<br>";
+  //console.log(dataSummary);
 
   for(let i = 0; i < currentFields.length; i++){
     // Creating checkbox with a unique ID;
@@ -199,16 +196,7 @@ const brightBackground = () => {
   if (!curVegaSpec.hasOwnProperty("config")) {
     curVegaSpec["config"] = {};
   }
-  curVegaSpec["config"]["background"] = "cyan";
-  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-  updatePlot("vegaWork");
-}
-
-const neutralBackground = () => {
-  if (!curVegaSpec.hasOwnProperty("config")) {
-    curVegaSpec["config"] = {};
-  }
-  curVegaSpec["config"]["background"] = "lightgrey";
+  curVegaSpec["config"]["background"] = "#aa1111";
   (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
   updatePlot("vegaWork");
 }
@@ -268,14 +256,12 @@ const cutAxis = () => {
 }
 // Sidebar
 function openNav() {
-  document.getElementById("data").style.width = "450px";
-  document.getElementById("main").style.marginLeft = "450px";
+  document.getElementById("data").style.width = "310px";
 }
 
 /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
 function closeNav() {
   document.getElementById("data").style.width = "0";
-  document.getElementById("main").style.marginLeft = "0";
 }
 document.getElementById('openDataBtn').addEventListener("click", openNav);
 document.getElementById('closeDataBtn').addEventListener("click", closeNav);
@@ -287,7 +273,6 @@ document.getElementById('build_graph').addEventListener("click", ()=>{updatePlot
 
 document.getElementById('addGrid').addEventListener("click", addGrid);
 document.getElementById('brightBackground').addEventListener("click", brightBackground);
-document.getElementById('neutralBackground').addEventListener("click", neutralBackground);
 document.getElementById('addStars').addEventListener("click", addStars);
 document.getElementById('cutAxis').addEventListener("click", cutAxis);
 init_draco();
