@@ -191,6 +191,7 @@ document.getElementById('RedGrid').addEventListener("click", gridClick);
 document.getElementById('BrightBackground').addEventListener("click", bgClick);
 document.getElementById('Stars').addEventListener("click", starClick);
 document.getElementById('NoZero').addEventListener("click", noZeroClick);
+document.getElementById('Rainbow').addEventListener("click", rainbowClick);
 
 function gridClick(){
   if ((document.getElementById("RedGrid")as HTMLInputElement).checked) effector.activateEffect("RedGrid");
@@ -213,6 +214,12 @@ function starClick(){
 function noZeroClick(){
   if ((document.getElementById("NoZero")as HTMLInputElement).checked) effector.activateEffect("NoZero");
   else effector.deactivateEffect("NoZero");
+  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(effector.getCurrentSpec()).replace(/,\"/g,",\n\"");
+  updatePlot("vegaWork");
+}
+function rainbowClick(){
+  if ((document.getElementById("Rainbow")as HTMLInputElement).checked) effector.activateEffect("Rainbow");
+  else effector.deactivateEffect("Rainbow");
   (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(effector.getCurrentSpec()).replace(/,\"/g,",\n\"");
   updatePlot("vegaWork");
 }

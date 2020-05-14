@@ -50,6 +50,9 @@ export class Effector {
         if (this.effects["NoZero"]) {
             this.noZero();
         }
+        if (this.effects["Rainbow"]) {
+            this.addRainbow();
+        }
     }
     // available effects
     private dummyEffect() {}
@@ -130,6 +133,27 @@ export class Effector {
           }
         }
       }
+      private addRainbow() {
+        if (this.currentSpec["encoding"]["x"]["type"] == "quantitative"){
+          this.currentSpec["encoding"]["color"] = {};
+          this.currentSpec["encoding"]["color"]["field"] = "quantitative";
+          this.currentSpec["encoding"]["color"]["scale"] = {"scheme":"rainbow"};
+          this.currentSpec["encoding"]["color"]["field"] = this.currentSpec["encoding"]["x"]["field"]
+        }
+       /* if (this.currentSpec["encoding"]["size"]["type"] == "quantitative") {
+          this.currentSpec["encoding"]["color"] = {};
+          this.currentSpec["encoding"]["color"]["field"] = "quantitative";
+          this.currentSpec["encoding"]["color"]["scale"] = {"scheme":"rainbow"};
+          this.currentSpec["encoding"]["color"]["field"] = this.currentSpec["encoding"]["size"]["field"]
+ 
+        }*/
+        if (this.currentSpec["encoding"]["y"]["type"] == "quantitative"){
+          this.currentSpec["encoding"]["color"] = {};
+          this.currentSpec["encoding"]["color"]["field"] = "quantitative";
+          this.currentSpec["encoding"]["color"]["scale"] = {"scheme":"rainbow"};
+          this.currentSpec["encoding"]["color"]["field"] = this.currentSpec["encoding"]["y"]["field"];
+        }
+        }
 }
 /*
 const addGrid = () => {
