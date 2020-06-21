@@ -103,7 +103,7 @@ textarea {
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
-  box-shadow: 5px 10px 8px #888888;
+  box-shadow: 5px 10px 8px #999999;
   text-align: center;
 }
 
@@ -133,7 +133,7 @@ button {
 .meter {
   display : inline-block;
   width: 45%;
-  padding-bottom: 224%;
+  padding-bottom: 280%;
   //background-color: seagreen;
   background: linear-gradient(0deg, #e95710 0%, white 50%, steelblue 100%);
 }
