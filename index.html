@@ -7,23 +7,25 @@
 </head>
 
 <body id="body">
-    <h1 id="heading">replace me</h1>
-    <button class="openDataBtn" id="openDataBtn">&#9776; Start Here</button>
     <div id=data class="sidebar">
         <a href="javascript:void(0)" class="closeDataBtn" id="closeDataBtn">&times;</a>
         <div class="middle_container">
-            <h2>Generate Vega-Lite Spec</h2>
+            <h2>Set Initial Visualization:</h2>
             <label for="selectData">Select data set and fields: </label>
             <select id="selectData" disabled></select>
             <div class="fields_container">
             <form id="fields"></form></div>
             <button id="draco_reason" class="run_button" disabled><b>Generate</b></button>
-            <h2>Fine Tune</h2>
+            <h2>Or paste VegaLite spec:</h2>
             <textarea id="vega_spec" class="vega_spec" rows="20" cols="35"></textarea>
             <button id="build_graph" class="run_button"><b>Visualize</b></button>
         </div>
     </div>
     <div class="global_div">
+        <h1 id="heading">Worst-Yours-Best</h1>
+        <div class="intro">
+        <button class="openDataBtn" id="openDataBtn">&#9776; Start here by setting initial visualization</button>
+        </div>
         <div class="Container">
             <div>
                 <h2>Initial Graph</h2>
@@ -36,7 +38,7 @@
             <div>
                 <h2>Apply Effects</h2>
             </div>
-            <div class="middle_container">
+            <div class="effects-container">
                 <input type="checkbox" id="RedGrid" name="RedGrid"><label for="RedGrid">Red Grid lines</label><br>
                 <input type="checkbox" id="BrightBackground" name="BrightBackground"><label for="BrightBackground">Bright Background</label><br>
                 <input type="checkbox" id="Stars" name="Stars"><label for="Stars">Star Markers</label><br>

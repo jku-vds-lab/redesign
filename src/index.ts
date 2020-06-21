@@ -2,9 +2,10 @@ import './style.scss'; // import styles as described https://github.com/webpack-
 import {Effector} from './effects';
 import Draco from 'draco-vis';
 import embed from 'vega-embed';
+import * as Draco_core from 'draco-core'
 
-document.title = 'Graph Destroyer';
-document.getElementById('heading').textContent = 'Graph Destroyer';
+
+document.title = 'Worst-Yours-Best';
 
 let draco_instance: Draco;
 let effector: Effector;
@@ -149,7 +150,7 @@ const reason_plot = () => {
   let spec = generateDRACOSpecification();
   let number_of_models = 1;
   currentResult = draco_instance.solve(spec,{"models":number_of_models});
-  console.log("Specification solved: ",currentResult);
+  console.log("Specification solved: ",currentResult, spec);
   curVegaSpec = currentResult.specs[0];
   //console.log(curVegaSpec);
   (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
@@ -161,17 +162,20 @@ const reason_plot = () => {
 /* VEGA */
 const updatePlot = (vegaId : string) => {
   if (vegaId == "vegaInit") {
-    embed('#vegaInit',specInit,{theme: 'dark'});
+    embed('#vegaInit',specInit);
   }
   else {
     let spec = JSON.parse((document.getElementById("vega_spec")as HTMLInputElement).value);
     curVegaSpec = spec;
-    embed('#'+vegaId,spec,{theme: 'dark'});
+    embed('#'+vegaId,spec);
+   //
+    const tmp = Draco_core.vl2asp(spec).join("\n");
+    console.log( draco_instance.solve(tmp,{"models":1}));
   }
 }
 // Sidebar
 function openNav() {
-  document.getElementById("data").style.width = "310px";
+  document.getElementById("data").style.width = "28%";
 }
 
 /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */

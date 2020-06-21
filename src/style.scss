@@ -1,57 +1,75 @@
 
 $header-color: rgb(0, 0, 0); // Sass variable: https://sass-lang.com/guide
-$text-color: rgb(245,245,245);
-$background-color: rgb(40,40,40);
+$text-color: rgb(0, 0, 0);
+$background-color: rgb(220,220,225);
+$div-background-color: rgb(255,255,255);
+$input-background-color: rgb(240,240,250);
 
-h1 {
-  color: $text-color;
-  border-bottom: 2px solid $text-color;
-  padding-bottom: 10px;
+h1 { 
+  text-align: center;
+  font-weight: normal;
+  margin: 15px;
+  padding-top: 15px;
 }
+h2 {
+  font-weight: normal;
+}
+
 
 body {
   color: $text-color;
   background: $background-color;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 1vw;
+  //font-family: 'Trebuchet MS', sans-serif;
 }
 
 .global_div {
-  margin: auto;
+  text-align: center;
   width: 95%;
-  margin-left: 20px;
+  margin: auto;
+  background-color: $div-background-color;
+  padding-bottom: 40%;
 }
-.middle_container {
-  margin: 0 auto;
-  padding: 0px;
+.intro {
+  text-align: center;
+}
+
+.effects-container {
   display:inline-block;
   vertical-align:top;
-  //max-height: 310px;
   overflow: auto;
   margin-left: 20px;
+  text-align: left;
 }
 .fields_container {
-  max-height: 310px;
+  max-height: 150px;
   overflow: auto;
   margin-left: 20px;
   margin-bottom: 5px;
+  text-align: left;
 }
 .Container {
-  margin: auto;
+  //margin: auto;
   //padding-left: 20px;
   display : inline-block;
   vertical-align : top;
-  min-width: 30%;
-  max-width: 33%;
+  width: 30%;
   overflow-x: auto;
+  background-color: $div-background-color;
 }
 select {
-  background-color: rgb(70,70,70);
+  background-color: $input-background-color;
   color: $text-color;
   border: none;
 }
 textarea {
-  background-color: rgb(70,70,70);
+  background-color: $input-background-color;
   color: $text-color;
+  font-size: 1vw;
   border: none;
+  width: 90%;
+  max-height: 150px;
 }
 
 .vega_container {
@@ -67,15 +85,18 @@ textarea {
   z-index: 1; /* Stay on top */
   top: 0;
   left: 0;
-  background-color: #303030; /* Black*/
+  background-color: $div-background-color;
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+  box-shadow: 5px 10px 8px #888888;
+  text-align: center;
 }
 
 button {
-  background-color: $text-color;
   border-radius: 4px;
+  background-color: $input-background-color;
+  font-size: 1vw;
 }
 
 .sidebar .closeDataBtn {
