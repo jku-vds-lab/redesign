@@ -13,6 +13,7 @@ h1 {
 }
 h2 {
   font-weight: normal;
+  padding-bottom: 10px;
 }
 
 
@@ -26,10 +27,10 @@ body {
 
 .global_div {
   text-align: center;
-  width: 95%;
+  width: 85%;
   margin: auto;
   background-color: $div-background-color;
-  padding-bottom: 40%;
+  padding-bottom: 15%;
 }
 .intro {
   text-align: center;
@@ -39,8 +40,8 @@ body {
   display:inline-block;
   vertical-align:top;
   overflow: auto;
-  margin-left: 20px;
   text-align: left;
+  padding-left: 50px;
 }
 .fields_container {
   max-height: 150px;
@@ -50,13 +51,26 @@ body {
   text-align: left;
 }
 .Container {
-  //margin: auto;
-  //padding-left: 20px;
   display : inline-block;
   vertical-align : top;
-  width: 30%;
+  width: 40%;
   overflow-x: auto;
   background-color: $div-background-color;
+}
+.meter-container {
+  display : inline-block;
+  vertical-align : top;
+  width: 5%;
+  overflow-x: auto;
+  background-color: $div-background-color;
+}
+.Container-low {
+  display : inline-block;
+  vertical-align : top;
+  width: 40%;
+  overflow-x: auto;
+  background-color: $div-background-color;
+  text-align: left;
 }
 select {
   background-color: $input-background-color;
@@ -114,5 +128,13 @@ button {
   color: $text-color;
   display: block;
   transition: 0.3s;
+}
+
+.meter {
+  display : inline-block;
+  width: 45%;
+  padding-bottom: 224%;
+  //background-color: seagreen;
+  background: linear-gradient(0deg, #e95710 0%, white 50%, steelblue 100%);
 }
 
