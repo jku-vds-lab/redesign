@@ -8,6 +8,7 @@ export class Effector {
         this.initialSpec = JSON.parse(JSON.stringify(initialSpec));
         this.currentSpec = JSON.parse(JSON.stringify(initialSpec));
         this.draco_instance = draco_inst;
+        //this.effects = this.detectEffects()[1];
         this.effects = {
                 "BrightBackground" : false,
                 "RedGrid" : false,
@@ -16,7 +17,24 @@ export class Effector {
                 "Rainbow" : false,
                 "DummyEffect" : true
         };
+        this.detectEffects();
     }
+
+    detectEffects() {
+      let applicableTo = []
+      let status = {}
+      console.log(this.checkZero());
+      /*if (zeroCheck[0]) {
+        applicableTo.push("NoZero");
+        if (zeroCheck[1]) {
+          status["NoZero"] = "true";
+        }
+        else status["NoZero"] = "false"
+      }
+      return [applicableTo, status];*/
+    }
+
+
 
     getInitialSpec() {
         return JSON.parse(JSON.stringify(this.initialSpec));
@@ -55,9 +73,7 @@ export class Effector {
         }
     }
     // available effects
-    private dummyEffect() {}
     private RedGrid() {
-        console.log(this);
         let refresh = false;
         if (this.currentSpec["encoding"].hasOwnProperty("x")) {
           if (!this.currentSpec["encoding"]["x"].hasOwnProperty("axis")) {
@@ -100,6 +116,58 @@ export class Effector {
           }
         }
       }
+
+      checkZero(){ // ?show zero on axis?
+
+        // OUT [applicable = (true/flase), active = (true/false)]
+
+        // CONDITION: There is at least one AXIS with quantitative Attribute on it --> true (applicable)
+        // POSSIBILITIES:
+        // -- -- range is set by hand --> check if zero is in --> true (applied)
+        // -- -- range is not set by hand, there is Zero-option set --> Zero option
+        // -- -- range is not set by hand, no indication --> true (applied)
+
+        let applicable = undefined;
+        let active = undefined;
+
+        // checking applicability
+        const xExistAndQuantitative = this.currentSpec["encoding"].hasOwnProperty("x") &&
+        (this.currentSpec["encoding"]["x"].hasOwnProperty("field")) &&
+        (this.currentSpec["encoding"]["x"]["type"] == "quantitative");
+
+        const yExistsAndQuantitative = this.currentSpec["encoding"].hasOwnProperty("y") &&
+        this.currentSpec["encoding"]["y"].hasOwnProperty("field") &&
+        (this.currentSpec["encoding"]["y"]["type"] == "quantitative");
+
+        if (xExistAndQuantitative||yExistsAndQuantitative) {
+              applicable = true;
+            }
+        else applicable = false;
+
+        console.log(xExistAndQuantitative + " " + yExistsAndQuantitative);
+        // checking on/off
+        if (applicable) {
+          if (xExistAndQuantitative) {
+            if (!this.currentSpec["encoding"]["x"].hasOwnProperty("scale")) {
+              active = true;
+            }
+            else if (this.currentSpec["encoding"]["x"]["scale"].hasOwnProperty("zero")) {
+              active = Boolean(this.currentSpec["encoding"]["x"]["scale"]["zero"]);
+            }
+            else if (this.currentSpec["encoding"]["x"]["scale"].hasOwnProperty("domain")) {
+              const min = +this.currentSpec["encoding"]["x"]["scale"]["domain"][0];
+              const max = +this.currentSpec["encoding"]["x"]["scale"]["domain"][1];
+              if (Math.sign(min) * Math.sign(max) <= 0) {
+                active = true;
+              }
+              else active = false;
+            }
+            else console.error("Unable to determine activity of Zero!");
+          }
+        }
+        return [applicable, active];
+      }
+
       private noZero () {
         let refresh = false;
         if (this.currentSpec["encoding"].hasOwnProperty("y")) {
@@ -107,10 +175,8 @@ export class Effector {
                 &&(this.currentSpec["encoding"]["y"]["type"] == "quantitative")) {
             const fld = this.currentSpec["encoding"]["y"]["field"];
             const summary = this.draco_instance.getSchema();
-            console.log(summary);
             const minVal = summary["stats"][fld]["min"];
             const maxVal = summary["stats"][fld]["max"];
-            console.log(minVal,maxVal);
             const marg = maxVal * 0.1;
             this.currentSpec["encoding"]["y"]["scale"] = {};
             this.currentSpec["encoding"]["y"]["scale"]["domain"] = [minVal - marg, maxVal + marg];
@@ -122,10 +188,8 @@ export class Effector {
               &&(this.currentSpec["encoding"]["x"]["type"]== "quantitative")) {
             const fld = this.currentSpec["encoding"]["x"]["field"];
             const summary = this.draco_instance.getSchema();
-            console.log(summary);
             const minVal = summary["stats"][fld]["min"];
             const maxVal = summary["stats"][fld]["max"];
-            console.log(minVal,maxVal);
             const marg = maxVal * 0.1 * 0.11;
             this.currentSpec["encoding"]["x"]["scale"] = {};
             this.currentSpec["encoding"]["x"]["scale"]["domain"] = [minVal - marg, maxVal - marg];
@@ -133,6 +197,7 @@ export class Effector {
           }
         }
       }
+
       private addRainbow() {
         if (this.currentSpec["encoding"]["x"]["type"] == "quantitative"){
           this.currentSpec["encoding"]["color"] = {};

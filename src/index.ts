@@ -19,8 +19,8 @@ let dataSetIndex = 0;
 
 let currentEncodings = {};
 let currentResult: any;
-let curVegaSpec: {};
-let specInit: {};
+let curVegaSpec: any;
+let specInit: any;
 
 const init_draco = async () => {
   draco_instance = await (new Draco().init());
@@ -36,8 +36,6 @@ const init_draco = async () => {
   dataSelector.addEventListener("change",
             function()
             {
-              console.log(dataSelector.selectedIndex, dataOptions[dataSelector.selectedIndex]);
-              
               const newIndex = dataSelector.selectedIndex;
               clearFieldCheckBoxes();
               if (newIndex != 0){
@@ -48,18 +46,17 @@ const init_draco = async () => {
                     draco_instance.prepareData(data);
                     dataSummary = draco_instance.getSchema();
                     setFieldCheckBoxes();
-                    console.log(data);
                   }
                   );
                 }
             });
 
   dataSelector.disabled = false;
-  (document.getElementById('draco_reason') as HTMLButtonElement).disabled = false;
+  (document.getElementById('generateFromData') as HTMLButtonElement).disabled = false;
 }
 
 /*
-Clears 'fields' if dataset (to be used when a new dataset is selected or
+Clears 'fields' (to be used when a new dataset is selected or
 when the old one deselected);
 */
 // ADD SAFETY, DISABLE BUTTONS!
@@ -142,36 +139,28 @@ const generateDRACOSpecification = () => {
     dracoSpec += ":- not field(" + encodings[i] + ",\"" 
                                  + currentEncodings[encodings[i]].name + "\").\n\n"
   }
-  console.log(dracoSpec);
   return dracoSpec;
 }
-
-const reason_plot = () => {
-  let spec = generateDRACOSpecification();
-  let number_of_models = 1;
-  currentResult = draco_instance.solve(spec,{"models":number_of_models});
-  console.log("Specification solved: ",currentResult, spec);
-  curVegaSpec = currentResult.specs[0];
-  //console.log(curVegaSpec);
-  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-  specInit = JSON.parse(JSON.stringify(curVegaSpec));
+// function for setting init viz-s
+const init_plots = (fromData = true) => {
+  if (fromData) {
+    let draco_spec = generateDRACOSpecification();
+    let number_of_models = 1;
+    currentResult = draco_instance.solve(draco_spec,{"models":number_of_models});
+    console.log("Specification solved: ",currentResult, draco_spec);
+    curVegaSpec = currentResult.specs[0];
+  } else {
+    curVegaSpec = JSON.parse((document.getElementById("vega_spec")as HTMLInputElement).value);
+  }
+  specInit = curVegaSpec;
   effector = new Effector(specInit, draco_instance);
-  updatePlot("vegaInit");
-  updatePlot("vegaWork");
+  updatePlot("#vegaInit", specInit);
+  updatePlot("#vegaWork", curVegaSpec);
 }
+
 /* VEGA */
-const updatePlot = (vegaId : string) => {
-  if (vegaId == "vegaInit") {
-    embed('#vegaInit',specInit);
-  }
-  else {
-    let spec = JSON.parse((document.getElementById("vega_spec")as HTMLInputElement).value);
-    curVegaSpec = spec;
-    embed('#'+vegaId,spec);
-   //
-    const tmp = Draco_core.vl2asp(spec).join("\n");
-    console.log( draco_instance.solve(tmp,{"models":1}));
-  }
+const updatePlot = (vegaId : string, spec = curVegaSpec) => {
+  embed(vegaId,spec);
 }
 // Sidebar
 function openNav() {
@@ -187,8 +176,8 @@ document.getElementById('closeDataBtn').addEventListener("click", closeNav);
 
 //
 
-document.getElementById('draco_reason').addEventListener("click", reason_plot);
-document.getElementById('build_graph').addEventListener("click", ()=>{updatePlot("vegaWork"); updatePlot("vegaInit")});
+document.getElementById('generateFromData').addEventListener("click", ()=>{init_plots(true)});
+document.getElementById('generateFromSpec').addEventListener("click", ()=>{init_plots(false)});
 
 
 document.getElementById('RedGrid').addEventListener("click", gridClick);
@@ -200,8 +189,8 @@ document.getElementById('Rainbow').addEventListener("click", rainbowClick);
 function gridClick(){
   if ((document.getElementById("RedGrid")as HTMLInputElement).checked) effector.activateEffect("RedGrid");
   else effector.deactivateEffect("RedGrid");
-  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(effector.getCurrentSpec()).replace(/,\"/g,",\n\"");
-  updatePlot("vegaWork");
+  const spec = JSON.stringify(effector.getCurrentSpec()).replace(/,\"/g,",\n\"");
+  updatePlot("vegaWork", spec);
 }
 function bgClick(){
   if ((document.getElementById("BrightBackground")as HTMLInputElement).checked) effector.activateEffect("BrightBackground");
@@ -227,9 +216,5 @@ function rainbowClick(){
   (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(effector.getCurrentSpec()).replace(/,\"/g,",\n\"");
   updatePlot("vegaWork");
 }
-/*
-document.getElementById('brightBackground').addEventListener("click", brightBackground);
-document.getElementById('addStars').addEventListener("click", addStars);
-document.getElementById('cutAxis').addEventListener("click", cutAxis);
-*/
+
 init_draco();

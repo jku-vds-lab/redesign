@@ -20,9 +20,8 @@ h2 {
 body {
   color: $text-color;
   background: $background-color;
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: Georgia, serif;
   font-size: 1vw;
-  //font-family: 'Trebuchet MS', sans-serif;
 }
 
 .global_div {
@@ -133,7 +132,7 @@ button {
 .meter {
   display : inline-block;
   width: 45%;
-  padding-bottom: 280%;
+  padding-bottom: 260%;
   //background-color: seagreen;
   background: linear-gradient(0deg, #e95710 0%, white 50%, steelblue 100%);
 }
