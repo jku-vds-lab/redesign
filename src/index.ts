@@ -3,6 +3,7 @@ import {Effector} from './effects';
 import Draco from 'draco-vis';
 import embed from 'vega-embed';
 import * as Draco_core from 'draco-core'
+import { json } from 'd3';
 
 
 document.title = 'Worst-Yours-Best';
@@ -21,6 +22,8 @@ let currentEncodings = {};
 let currentResult: any;
 let curVegaSpec: any;
 let specInit: any;
+
+let availableEffects: any;
 
 const init_draco = async () => {
   draco_instance = await (new Draco().init());
@@ -143,17 +146,26 @@ const generateDRACOSpecification = () => {
 }
 // function for setting init viz-s
 const init_plots = (fromData = true) => {
+
   if (fromData) {
     let draco_spec = generateDRACOSpecification();
     let number_of_models = 1;
     currentResult = draco_instance.solve(draco_spec,{"models":number_of_models});
-    console.log("Specification solved: ",currentResult, draco_spec);
+    // console.log("Specification solved: ",currentResult, draco_spec);
     curVegaSpec = currentResult.specs[0];
   } else {
     curVegaSpec = JSON.parse((document.getElementById("vega_spec")as HTMLInputElement).value);
   }
+
   specInit = curVegaSpec;
+  (document.getElementById("vega_spec") as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
   effector = new Effector(specInit, draco_instance);
+  availableEffects = effector.getEffects();
+  
+  if (availableEffects.hasOwnProperty("Zero")) {
+    document.getElementById("ZeroBox").hidden = false;
+    (document.getElementById("Zero") as HTMLInputElement).checked = availableEffects["Zero"];
+  }
   updatePlot("#vegaInit", specInit);
   updatePlot("#vegaWork", curVegaSpec);
 }
@@ -179,13 +191,20 @@ document.getElementById('closeDataBtn').addEventListener("click", closeNav);
 document.getElementById('generateFromData').addEventListener("click", ()=>{init_plots(true)});
 document.getElementById('generateFromSpec').addEventListener("click", ()=>{init_plots(false)});
 
-
+document.getElementById('Zero').addEventListener("click", ZeroClick);
+/*
 document.getElementById('RedGrid').addEventListener("click", gridClick);
 document.getElementById('BrightBackground').addEventListener("click", bgClick);
 document.getElementById('Stars').addEventListener("click", starClick);
-document.getElementById('NoZero').addEventListener("click", noZeroClick);
 document.getElementById('Rainbow').addEventListener("click", rainbowClick);
-
+*/
+function ZeroClick(){
+  if ((document.getElementById("Zero")as HTMLInputElement).checked) effector.activateEffect("Zero");
+  else effector.deactivateEffect("Zero");
+  curVegaSpec = effector.getCurrentSpec();
+  updatePlot("#vegaWork", curVegaSpec);
+}
+/*
 function gridClick(){
   if ((document.getElementById("RedGrid")as HTMLInputElement).checked) effector.activateEffect("RedGrid");
   else effector.deactivateEffect("RedGrid");
@@ -204,17 +223,11 @@ function starClick(){
   (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(effector.getCurrentSpec()).replace(/,\"/g,",\n\"");
   updatePlot("vegaWork");
 }
-function noZeroClick(){
-  if ((document.getElementById("NoZero")as HTMLInputElement).checked) effector.activateEffect("NoZero");
-  else effector.deactivateEffect("NoZero");
-  (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(effector.getCurrentSpec()).replace(/,\"/g,",\n\"");
-  updatePlot("vegaWork");
-}
 function rainbowClick(){
   if ((document.getElementById("Rainbow")as HTMLInputElement).checked) effector.activateEffect("Rainbow");
   else effector.deactivateEffect("Rainbow");
   (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(effector.getCurrentSpec()).replace(/,\"/g,",\n\"");
   updatePlot("vegaWork");
 }
-
+*/
 init_draco();
