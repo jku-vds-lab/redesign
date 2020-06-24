@@ -161,7 +161,8 @@ const init_plots = (fromData = true) => {
   (document.getElementById("vega_spec") as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
   effector = new Effector(specInit, draco_instance);
   availableEffects = effector.getEffects();
-  
+
+  document.getElementById("ZeroBox").hidden = true;
   if (availableEffects.hasOwnProperty("Zero")) {
     document.getElementById("ZeroBox").hidden = false;
     (document.getElementById("Zero") as HTMLInputElement).checked = availableEffects["Zero"];
