@@ -204,6 +204,7 @@ function ZeroClick(){
   else effector.deactivateEffect("Zero");
   curVegaSpec = effector.getCurrentSpec();
   updatePlot("#vegaWork", curVegaSpec);
+  console.log(effector.currentScore, effector.maxScore);
 }
 /*
 function gridClick(){

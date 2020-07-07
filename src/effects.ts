@@ -2,38 +2,29 @@ export class Effector {
     private initialSpec : {};
     private currentSpec : {};
     private effects : {};
-    private effectsPhases : {}; // keep initial state of effects so that we can process them correctly
     private draco_instance : any;
+    currentScore = 0;
+    maxScore = 0;
 
     constructor(initialSpec : {}, draco_inst : any) {
-        this.initialSpec = JSON.parse(JSON.stringify(initialSpec));
-        this.currentSpec = JSON.parse(JSON.stringify(initialSpec));
-        this.draco_instance = draco_inst;
-        this.detectEffects(); // creates dict of applicable effects also checking their current status (on/off)
-        //this.effects = this.detectEffects()[1];
-        /*this.effects = {
-                "BrightBackground" : false,
-                "RedGrid" : false,
-                "Stars" : false,
-                "Zero" : false,
-                "Rainbow" : false,
-                "DummyEffect" : true
-        };*/
-        this.detectEffects();
+      this.initialSpec = JSON.parse(JSON.stringify(initialSpec));
+      this.currentSpec = JSON.parse(JSON.stringify(initialSpec));
+      this.draco_instance = draco_inst;
+      this.detectEffects(); // creates dict of applicable effects also checking their current status (on/off)
+      this.maxScore = Object.keys(this.effects).length;
     }
 
     detectEffects() {
       let res = {}
       const zeroStatus = this.checkZero();
       if (zeroStatus[0] /* effect available */) {
-        res["Zero"] = zeroStatus[1];
+        res["Zero"] = {"on":zeroStatus[1],"positive":zeroStatus[2],"initial_on":zeroStatus[1]};
       }
       this.effects = res;
-      this.effectsPhases = JSON.parse(JSON.stringify(res));
     }
 
     getEffects() {
-        return this.effects;
+      return this.effects;
     }
 
     getInitialSpec() {
@@ -45,31 +36,29 @@ export class Effector {
     }
 
     activateEffect(effect : string) {
-        this.effects[effect] = true;
-        this.applyEffects()
+        this.effects[effect]["on"] = true;
+        this.applyEffects();
+        this.calculateCurrentScore();
     }
 
     deactivateEffect(effect : string) {
-        this.effects[effect] = false;
-        this.applyEffects()
+        this.effects[effect]["on"] = false;
+        this.applyEffects();
+        this.calculateCurrentScore();
+    }
+    private calculateCurrentScore() {
+      let score = 0;
+      Object.keys(this.effects).forEach(element => {
+        const curEffect = this.effects[element];
+        if (curEffect["on"] == curEffect["positive"]) score++; 
+      });
+      this.currentScore = score;
+      return score;
     }
     // main function for applying effects
     private applyEffects() {
         this.currentSpec = JSON.parse(JSON.stringify(this.initialSpec));
         this.Zero();
-        /*
-        if (this.effects["RedGrid"]) {
-            this.RedGrid();
-        }
-        if (this.effects["BrightBackground"]) {
-            this.BrightBackground();
-        }
-        if (this.effects["Stars"]) {
-            this.addStars();
-        }
-        if (this.effects["Rainbow"]) {
-            this.addRainbow();
-        }*/
     }
     // available effects
     private RedGrid() {
@@ -154,10 +143,12 @@ export class Effector {
         // -- -- range is not set by hand, there is Zero-option set --> Zero option
         // -- -- +- note: Zero:False doesn't guarantee rule violation (e.g. in case when we have values == or around 0);
         // -- -- +- way to solve - butcher VEGA SVG element;
+        // -- -- +- If the initial range includes zero but set in a weird way (like max less ten max of the data) the effect still counts as ON;
         // -- -- range is not set by hand, no indication --> true (applied)
 
         let applicable = undefined;
         let active = undefined;
+        let positive = true;
 
         // checking applicability
         const xExistsAndQuantitative = this.axisExistsAndQuantitative("x");
@@ -167,8 +158,6 @@ export class Effector {
               applicable = true;
             }
         else applicable = false;
-
-        console.log(xExistsAndQuantitative + " " + yExistsAndQuantitative);
 
         // checking on/off
         if (applicable) {
@@ -182,18 +171,18 @@ export class Effector {
             active = active && this.zeroActivityAxis("y");
           }
         }
-        return [applicable, active];
+        return [applicable, active, positive];
       }
 
       private Zero () {
         // if the effect was active initially an we are asked to activate it again
         // we return original user source regarding this effect, do nothing:
-        if (this.effects["Zero"] == this.effectsPhases["Zero"]) return;
+        if (this.effects["Zero"]["on"] == this.effects["Zero"]["initial_on"]) return;
         // helpers:
         const xExistsAndQuantitative = this.axisExistsAndQuantitative("x");
         const yExistsAndQuantitative = this.axisExistsAndQuantitative("y");
         // otherwise we check if effect needs to make initial spec worse or better:
-        if (this.effectsPhases["Zero"]==false) {
+        if (this.effects["Zero"]["initial_on"]==false) {
         // if the effect was not applied initially and now selected -> make better
           if (xExistsAndQuantitative && ! this.zeroActivityAxis("x")){
             this.currentSpec["encoding"]["x"]["scale"] = {"zero":true};
