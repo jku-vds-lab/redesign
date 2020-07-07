@@ -59,7 +59,7 @@ body {
 .meter-container {
   display : inline-block;
   vertical-align : top;
-  width: 5%;
+  width: 15%;
   overflow-x: auto;
   background-color: $div-background-color;
 }
@@ -129,11 +129,55 @@ button {
   transition: 0.3s;
 }
 
-.meter {
-  display : inline-block;
-  width: 45%;
-  padding-bottom: 260%;
-  //background-color: seagreen;
-  background: linear-gradient(0deg, #e95710 0%, white 50%, steelblue 100%);
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 5px;
+}
+.grid-item {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 1px;
+  font-size: 10px;
+  text-align: center;
+  padding-bottom: 15%;
+  text-align: center;
 }
 
+.meter {
+  border: 1px solid black;
+}
+
+.grid-best {
+  background-color: rgba(175, 203, 255, 0.8);
+  color: rgba(0, 19, 53, 0.8);
+  padding: 1px;
+  font-size: 10px;
+  text-align: center;
+  padding-bottom: 15%;
+  text-align: center;
+}
+.grid-2ndbest {
+  background-color: rgba(236, 243, 255, 0.8);
+  padding: 1px;
+  font-size: 10px;
+  text-align: center;
+  padding-bottom: 15%;
+  text-align: center;
+}
+.grid-3rdbest {
+  background-color: rgba(254, 227, 232, 0.8);
+  padding: 1px;
+  font-size: 10px;
+  text-align: center;
+  padding-bottom: 15%;
+  text-align: center;
+}
+.grid-worst {
+  background-color: rgba(255, 175, 175, 0.8);
+  color: rgba(53, 0, 0, 0.8);
+  padding: 1px;
+  font-size: 10px;
+  text-align: center;
+  padding-bottom: 15%;
+  text-align: center;
+}
