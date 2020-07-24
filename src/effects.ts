@@ -17,8 +17,16 @@ export class Effector {
     detectEffects() {
       let res = {}
       const zeroStatus = this.checkZero();
+      const colorSeqNominalStatus = this.checkColorSeqNominal();
       if (zeroStatus[0] /* effect available */) {
-        res["Zero"] = {"on":zeroStatus[1],"positive":zeroStatus[2],"initial_on":zeroStatus[1]};
+        res["Zero"] = {"on":zeroStatus[1],
+                       "positive":zeroStatus[2],
+                       "initial_on":zeroStatus[1]};
+      }
+      if (colorSeqNominalStatus[0]) {
+        res["ColorSeqNominal"] = {"on": colorSeqNominalStatus[1], 
+                                  "positive": colorSeqNominalStatus[2],
+                                  "initial_on": colorSeqNominalStatus[1]}
       }
       this.effects = res;
     }
@@ -61,49 +69,6 @@ export class Effector {
         this.Zero();
     }
     // available effects
-    private RedGrid() {
-        let refresh = false;
-        if (this.currentSpec["encoding"].hasOwnProperty("x")) {
-          if (!this.currentSpec["encoding"]["x"].hasOwnProperty("axis")) {
-            this.currentSpec["encoding"]["x"]["axis"] = {};
-          }
-          this.currentSpec["encoding"]["x"]["axis"]["grid"] = true;
-          this.currentSpec["encoding"]["x"]["axis"]["gridColor"] = "red";
-          refresh = true;
-        }
-        if (this.currentSpec["encoding"].hasOwnProperty("y")) {
-          if (!this.currentSpec["encoding"]["y"].hasOwnProperty("axis")) {
-            this.currentSpec["encoding"]["y"]["axis"] = {};
-          }
-          this.currentSpec["encoding"]["y"]["axis"]["grid"] = true;
-          this.currentSpec["encoding"]["y"]["axis"]["gridColor"] = "red";
-          refresh = true;
-        }
-        if (refresh) {
-         // (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-         // updatePlot("vegaWork");
-            console.log("Red Grif applied, need to refresh the graph")
-        }
-      }
-      private BrightBackground() {
-        if (!this.currentSpec.hasOwnProperty("config")) {
-            this.currentSpec["config"] = {};
-        }
-        this.currentSpec["config"]["background"] = "#aa1111";
-      }
-      private addStars = () => {
-        if (!(this.currentSpec["mark"] == "text")) {
-          if ((this.currentSpec["encoding"]["x"]["type"] == "nominal")
-          ||(this.currentSpec["encoding"]["x"]["type"] == "ordinal")
-          ||(this.currentSpec["encoding"]["y"]["type"] == "nominal")
-          ||(this.currentSpec["encoding"]["y"]["type"] == "ordinal")) {
-            this.currentSpec["mark"] = "text";
-            this.currentSpec["encoding"]["text"] = {};
-            //console.log(this.currentSpec);
-            this.currentSpec["encoding"]["text"]["value"] = "⭐";
-          }
-        }
-      }
       private zeroActivityAxis(axis: String) {
         let active = true;
           if (!this.currentSpec["encoding"][axis].hasOwnProperty("scale")) {
@@ -214,6 +179,74 @@ export class Effector {
         }
       }
 
+      private checkColorSeqNominal() {
+        /* Put sequential scheme on color for Nominal */
+        let applicable = undefined;
+        let active = undefined;
+        let positive = false;
+
+        const categoricalSchemes = ["accent", "category10", "category20", "category20b", "category20c",
+                                    "dark2", "paired", "pastel1", "pastel2", "set1", "set2", "set3",
+                                    "tableau10", "tableau20"];
+        const ordinalSchemes = [];
+        const continuousSchemes = [];
+
+        const enc = this.currentSpec["encoding"];
+        applicable = enc.hasOwnProperty("color") && 
+                     enc["color"]["type"] == "nominal" &&
+                     enc["color"].hasOwnProperty("scale") &&
+                     enc["color"]["scale"].hasOwnProperty("scheme")
+                  
+        if (applicable) {
+          const scheme = enc["color"]["scale"]["scheme"];
+          active = !(categoricalSchemes.includes(scheme));
+        }
+        return [applicable, active, positive];
+      }
+      /*
+      private RedGrid() {
+        let refresh = false;
+        if (this.currentSpec["encoding"].hasOwnProperty("x")) {
+          if (!this.currentSpec["encoding"]["x"].hasOwnProperty("axis")) {
+            this.currentSpec["encoding"]["x"]["axis"] = {};
+          }
+          this.currentSpec["encoding"]["x"]["axis"]["grid"] = true;
+          this.currentSpec["encoding"]["x"]["axis"]["gridColor"] = "red";
+          refresh = true;
+        }
+        if (this.currentSpec["encoding"].hasOwnProperty("y")) {
+          if (!this.currentSpec["encoding"]["y"].hasOwnProperty("axis")) {
+            this.currentSpec["encoding"]["y"]["axis"] = {};
+          }
+          this.currentSpec["encoding"]["y"]["axis"]["grid"] = true;
+          this.currentSpec["encoding"]["y"]["axis"]["gridColor"] = "red";
+          refresh = true;
+        }
+        if (refresh) {
+         // (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
+         // updatePlot("vegaWork");
+            console.log("Red Grif applied, need to refresh the graph")
+        }
+      }
+      private BrightBackground() {
+        if (!this.currentSpec.hasOwnProperty("config")) {
+            this.currentSpec["config"] = {};
+        }
+        this.currentSpec["config"]["background"] = "#aa1111";
+      }
+      private addStars = () => {
+        if (!(this.currentSpec["mark"] == "text")) {
+          if ((this.currentSpec["encoding"]["x"]["type"] == "nominal")
+          ||(this.currentSpec["encoding"]["x"]["type"] == "ordinal")
+          ||(this.currentSpec["encoding"]["y"]["type"] == "nominal")
+          ||(this.currentSpec["encoding"]["y"]["type"] == "ordinal")) {
+            this.currentSpec["mark"] = "text";
+            this.currentSpec["encoding"]["text"] = {};
+            //console.log(this.currentSpec);
+            this.currentSpec["encoding"]["text"]["value"] = "⭐";
+          }
+        }
+      }
       private addRainbow() {
         if (this.currentSpec["encoding"]["x"]["type"] == "quantitative"){
           this.currentSpec["encoding"]["color"] = {};
@@ -221,20 +254,13 @@ export class Effector {
           this.currentSpec["encoding"]["color"]["scale"] = {"scheme":"rainbow"};
           this.currentSpec["encoding"]["color"]["field"] = this.currentSpec["encoding"]["x"]["field"]
         }
-       /* if (this.currentSpec["encoding"]["size"]["type"] == "quantitative") {
-          this.currentSpec["encoding"]["color"] = {};
-          this.currentSpec["encoding"]["color"]["field"] = "quantitative";
-          this.currentSpec["encoding"]["color"]["scale"] = {"scheme":"rainbow"};
-          this.currentSpec["encoding"]["color"]["field"] = this.currentSpec["encoding"]["size"]["field"]
- 
-        }*/
         if (this.currentSpec["encoding"]["y"]["type"] == "quantitative"){
           this.currentSpec["encoding"]["color"] = {};
           this.currentSpec["encoding"]["color"]["field"] = "quantitative";
           this.currentSpec["encoding"]["color"]["scale"] = {"scheme":"rainbow"};
           this.currentSpec["encoding"]["color"]["field"] = this.currentSpec["encoding"]["y"]["field"];
         }
-        }
+        }*/
 }
 /*
 const addGrid = () => {

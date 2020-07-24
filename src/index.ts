@@ -3,7 +3,6 @@ import {Effector} from './effects';
 import Draco from 'draco-vis';
 import embed from 'vega-embed';
 
-
 document.title = 'Worst-Yours-Best';
 
 let draco_instance: Draco;
@@ -65,7 +64,6 @@ const fetchDataset = async (path) => {
 Clears 'fields' (to be used when a new dataset is selected or
 when the old one deselected);
 */
-// ADD SAFETY, DISABLE BUTTONS!
 const clearFieldCheckBoxes = () => {
   let flds = document.getElementById('fields');
   while (flds.firstChild) {
@@ -83,9 +81,6 @@ of the dataset;
 const setFieldCheckBoxes = () => {
   let flds = document.getElementById('fields');
   currentFields = Object.keys(dataSummary.stats)
-
-  //console.log(dataSummary);
-
   for(let i = 0; i < currentFields.length; i++){
     // Creating checkbox with a unique ID;
     let box = document.createElement("INPUT");
@@ -170,10 +165,17 @@ const init_plots = async (fromData = true) => {
   availableEffects = effector.getEffects();
 
   document.getElementById("ZeroBox").hidden = true;
+  document.getElementById("ColorSeqNominalBox").hidden = true;
   if (availableEffects.hasOwnProperty("Zero")) {
     document.getElementById("ZeroBox").hidden = false;
     (document.getElementById("Zero") as HTMLInputElement).checked = availableEffects["Zero"];
   }
+  //ColorSeqNominal
+  if (availableEffects.hasOwnProperty("ColorSeqNominal")) {
+    document.getElementById("ColorSeqNominalBox").hidden = false;
+    (document.getElementById("ColorSeqNominal") as HTMLInputElement).checked = availableEffects["ColorSeqNominal"];
+  }
+
   updatePlot("#vegaInit", specInit);
   updatePlot("#vegaWork", curVegaSpec);
 }
