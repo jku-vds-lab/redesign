@@ -159,21 +159,24 @@ const init_plots = async (fromData = true) => {
                     dataSummary = draco_instance.getSchema();
     })
   }
-
+  effector = undefined;
   specInit = curVegaSpec;
   effector = new Effector(specInit, dataSummary);
   availableEffects = effector.getEffects();
+  
+  console.log(effector, curVegaSpec);
 
   document.getElementById("ZeroBox").hidden = true;
   document.getElementById("ColorSeqNominalBox").hidden = true;
+
   if (availableEffects.hasOwnProperty("Zero")) {
     document.getElementById("ZeroBox").hidden = false;
-    (document.getElementById("Zero") as HTMLInputElement).checked = availableEffects["Zero"];
+    (document.getElementById("Zero") as HTMLInputElement).checked = availableEffects["Zero"]["on"];
   }
   //ColorSeqNominal
   if (availableEffects.hasOwnProperty("ColorSeqNominal")) {
     document.getElementById("ColorSeqNominalBox").hidden = false;
-    (document.getElementById("ColorSeqNominal") as HTMLInputElement).checked = availableEffects["ColorSeqNominal"];
+    (document.getElementById("ColorSeqNominal") as HTMLInputElement).checked = availableEffects["ColorSeqNominal"]["on"];
   }
 
   updatePlot("#vegaInit", specInit);
@@ -199,11 +202,12 @@ document.getElementById('closeDataBtn').addEventListener("click", closeNav);
 document.getElementById('generateFromData').addEventListener("click", ()=>{init_plots(true)});
 document.getElementById('generateFromSpec').addEventListener("click", ()=>{init_plots(false)});
 
-document.getElementById('Zero').addEventListener("click", ZeroClick);
+document.getElementById('Zero').addEventListener("click", ()=>{effectClick("Zero")});
+document.getElementById('ColorSeqNominal').addEventListener("click", ()=>{effectClick("ColorSeqNominal")});
 
-function ZeroClick(){
-  if ((document.getElementById("Zero")as HTMLInputElement).checked) effector.activateEffect("Zero");
-  else effector.deactivateEffect("Zero");
+function effectClick(effect : string) {
+  if ((document.getElementById(effect)as HTMLInputElement).checked) effector.activateEffect(effect);
+  else effector.deactivateEffect(effect);
   curVegaSpec = effector.getCurrentSpec();
   updatePlot("#vegaWork", curVegaSpec);
   console.log(effector.currentScore, effector.maxScore);

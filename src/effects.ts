@@ -66,7 +66,8 @@ export class Effector {
     // main function for applying effects
     private applyEffects() {
         this.currentSpec = JSON.parse(JSON.stringify(this.initialSpec));
-        this.Zero();
+        if (this.effects.hasOwnProperty("Zero")) this.Zero();
+        if (this.effects.hasOwnProperty("ColorSeqNominal"))this.ColorSeqNominal();
     }
     // available effects
       private zeroActivityAxis(axis: String) {
@@ -188,8 +189,6 @@ export class Effector {
         const categoricalSchemes = ["accent", "category10", "category20", "category20b", "category20c",
                                     "dark2", "paired", "pastel1", "pastel2", "set1", "set2", "set3",
                                     "tableau10", "tableau20"];
-        const ordinalSchemes = [];
-        const continuousSchemes = [];
 
         const enc = this.currentSpec["encoding"];
         applicable = enc.hasOwnProperty("color") && 
@@ -201,7 +200,18 @@ export class Effector {
           const scheme = enc["color"]["scale"]["scheme"];
           active = !(categoricalSchemes.includes(scheme));
         }
+        console.log("ColorSeqNominal active");
         return [applicable, active, positive];
+      }
+
+      private ColorSeqNominal() {
+        if (this.effects["ColorSeqNominal"]["on"] == this.effects["ColorSeqNominal"]["initial_on"]) return;
+        if (this.effects["ColorSeqNominal"]["on"]) {
+          this.currentSpec["encoding"]["color"]["scale"]["scheme"] = "reds";
+        }
+        else {
+          this.currentSpec["encoding"]["color"]["scale"]["scheme"] = "tableau10";
+        }
       }
       /*
       private RedGrid() {
