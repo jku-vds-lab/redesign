@@ -2,14 +2,14 @@ export class Effector {
     private initialSpec : {};
     private currentSpec : {};
     private effects : {};
-    private draco_instance : any;
+    private dataSummary : any;
     currentScore = 0;
     maxScore = 0;
 
-    constructor(initialSpec : {}, draco_inst : any) {
+    constructor(initialSpec : {}, dat_summ : any) {
       this.initialSpec = JSON.parse(JSON.stringify(initialSpec));
       this.currentSpec = JSON.parse(JSON.stringify(initialSpec));
-      this.draco_instance = draco_inst;
+      this.dataSummary = dat_summ;
       this.detectEffects(); // creates dict of applicable effects also checking their current status (on/off)
       this.maxScore = Object.keys(this.effects).length;
     }
@@ -195,7 +195,7 @@ export class Effector {
         // if it was applied initially and now the effect is deselected -> make worse
           if (yExistsAndQuantitative) {
               const fld = this.currentSpec["encoding"]["y"]["field"];
-              const summary = this.draco_instance.getSchema();
+              const summary = this.dataSummary;
               const minVal = summary["stats"][fld]["min"];
               const maxVal = summary["stats"][fld]["max"];
               const marg = maxVal * 0.1;
@@ -204,7 +204,7 @@ export class Effector {
           }
           if (xExistsAndQuantitative) {
               const fld = this.currentSpec["encoding"]["x"]["field"];
-              const summary = this.draco_instance.getSchema();
+              const summary = this.dataSummary;
               const minVal = summary["stats"][fld]["min"];
               const maxVal = summary["stats"][fld]["max"];
               const marg = maxVal * 0.1 * 0.11;
