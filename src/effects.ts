@@ -18,6 +18,7 @@ export class Effector {
       let res = {}
       const zeroStatus = this.checkZero();
       const colorSeqNominalStatus = this.checkColorSeqNominal();
+      const overplottingStatus = this.checkOverplotting();
       if (zeroStatus[0] /* effect available */) {
         res["Zero"] = {"on":zeroStatus[1],
                        "positive":zeroStatus[2],
@@ -200,7 +201,6 @@ export class Effector {
           const scheme = enc["color"]["scale"]["scheme"];
           active = !(categoricalSchemes.includes(scheme));
         }
-        console.log("ColorSeqNominal active");
         return [applicable, active, positive];
       }
 
@@ -212,6 +212,34 @@ export class Effector {
         else {
           this.currentSpec["encoding"]["color"]["scale"]["scheme"] = "tableau10";
         }
+      }
+
+      private checkOverplotting() {
+        let applicable = undefined;
+        let active = undefined;
+        let positive = false;
+
+        // calculating overplotting factor
+        // NumMarks * MarkBBoxArea / AllMarksBBoxArea
+        
+        // bounding element for all marks on the first plot
+        let marksGArr: HTMLCollectionOf<Element> | SVGGElement[];
+
+        marksGArr = document.getElementsByClassName("mark-symbol role-mark marks");
+        console.log(marksGArr, marksGArr[0]);
+        let marksG = (marksGArr[0]) as SVGGElement;
+        const marksGAtt = marksG.getBBox();
+        const allMarksBoundingArea = marksGAtt["width"] * marksGAtt["height"];
+
+        let marksTotalArea = 0;
+        const markNodes = marksG.childNodes;
+        for(let i=0; i < markNodes.length; i++){
+          const curMarkAtt = (markNodes[i] as SVGPathElement).getBBox();
+          marksTotalArea += curMarkAtt["width"] * curMarkAtt["height"];
+        }
+
+        const overplottingFactor = marksTotalArea / allMarksBoundingArea;
+        console.log(overplottingFactor);
       }
       /*
       private RedGrid() {

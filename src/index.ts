@@ -157,17 +157,23 @@ const init_plots = async (fromData = true) => {
     await fetchDataset(dataURL).then(json => data = json).then(()=> {
                     draco_instance.prepareData(data);
                     dataSummary = draco_instance.getSchema();
+    // TODO: reset dataset combobox and checkboxes to initial undefined state!!!
     })
   }
   effector = undefined;
   specInit = curVegaSpec;
-  effector = new Effector(specInit, dataSummary);
-  availableEffects = effector.getEffects();
-  
-  console.log(effector, curVegaSpec);
+
+  updatePlot("#vegaInit", specInit)
+      .then(()=>{updatePlot("#vegaWork", curVegaSpec);})
+      .then(()=>{
+        console.log(document.getElementsByClassName("mark-symbol role-mark marks")[0]);
+        effector = new Effector(specInit, dataSummary);
+        availableEffects = effector.getEffects();
+  // console.log(effector, curVegaSpec);
 
   document.getElementById("ZeroBox").hidden = true;
   document.getElementById("ColorSeqNominalBox").hidden = true;
+
 
   if (availableEffects.hasOwnProperty("Zero")) {
     document.getElementById("ZeroBox").hidden = false;
@@ -178,14 +184,12 @@ const init_plots = async (fromData = true) => {
     document.getElementById("ColorSeqNominalBox").hidden = false;
     (document.getElementById("ColorSeqNominal") as HTMLInputElement).checked = availableEffects["ColorSeqNominal"]["on"];
   }
-
-  updatePlot("#vegaInit", specInit);
-  updatePlot("#vegaWork", curVegaSpec);
+  });
 }
 
 /* VEGA */
-const updatePlot = (vegaId : string, spec = curVegaSpec) => {
-  embed(vegaId,spec);
+const updatePlot = async (vegaId : string, spec = curVegaSpec) => {
+  await embed(vegaId, spec, {"renderer":"svg"});
 }
 // Sidebar
 function openNav() {
