@@ -18,17 +18,29 @@ export class Effector {
       let res = {}
       const zeroStatus = this.checkZero();
       const colorSeqNominalStatus = this.checkColorSeqNominal();
-      const overplottingStatus = this.checkOverplotting();
+      const overplottingTranspStatus = this.checkOverplottingTransp();
       if (zeroStatus[0] /* effect available */) {
-        res["Zero"] = {"on":zeroStatus[1],
-                       "positive":zeroStatus[2],
-                       "initial_on":zeroStatus[1]};
+        res["Zero"] = {
+          "on":zeroStatus[1],
+          "positive":zeroStatus[2],
+          "initial_on":zeroStatus[1]
+        };
       }
       if (colorSeqNominalStatus[0]) {
-        res["ColorSeqNominal"] = {"on": colorSeqNominalStatus[1], 
-                                  "positive": colorSeqNominalStatus[2],
-                                  "initial_on": colorSeqNominalStatus[1]}
+        res["ColorSeqNominal"] = {
+          "on": colorSeqNominalStatus[1], 
+          "positive": colorSeqNominalStatus[2],
+          "initial_on": colorSeqNominalStatus[1]
+        }
       }
+      if (overplottingTranspStatus[0]) {
+        res["OverplottingTransp"] = {
+          "on": overplottingTranspStatus[1], 
+          "positive": overplottingTranspStatus[2],
+          "initial_on": overplottingTranspStatus[1]
+        }
+      }
+      console.log(overplottingTranspStatus);
       this.effects = res;
     }
 
@@ -68,7 +80,8 @@ export class Effector {
     private applyEffects() {
         this.currentSpec = JSON.parse(JSON.stringify(this.initialSpec));
         if (this.effects.hasOwnProperty("Zero")) this.Zero();
-        if (this.effects.hasOwnProperty("ColorSeqNominal"))this.ColorSeqNominal();
+        if (this.effects.hasOwnProperty("ColorSeqNominal")) this.ColorSeqNominal();
+        if (this.effects.hasOwnProperty("OverplottingTransp")) this.OverplottingTransp();
     }
     // available effects
       private zeroActivityAxis(axis: String) {
@@ -214,10 +227,12 @@ export class Effector {
         }
       }
 
-      private checkOverplotting() {
+      private checkOverplottingTransp() {
+        const overplottingFactorThreshold = 0.3;
+
         let applicable = undefined;
         let active = undefined;
-        let positive = false;
+        let positive = true;
 
         // calculating overplotting factor
         // NumMarks * MarkBBoxArea / AllMarksBBoxArea
@@ -226,7 +241,7 @@ export class Effector {
         let marksGArr: HTMLCollectionOf<Element> | SVGGElement[];
 
         marksGArr = document.getElementsByClassName("mark-symbol role-mark marks");
-        console.log(marksGArr, marksGArr[0]);
+        if (marksGArr[0] === undefined) {console.log("BlOoOP!", marksGArr.length); return [false, undefined, true]};
         let marksG = (marksGArr[0]) as SVGGElement;
         const marksGAtt = marksG.getBBox();
         const allMarksBoundingArea = marksGAtt["width"] * marksGAtt["height"];
@@ -239,7 +254,40 @@ export class Effector {
         }
 
         const overplottingFactor = marksTotalArea / allMarksBoundingArea;
+        applicable = overplottingFactor >= overplottingFactorThreshold;
         console.log(overplottingFactor);
+
+        if (applicable) {
+          const m = this.currentSpec["mark"];
+          if (m.hasOwnProperty("opacity")) {
+            if (m["opacity"] >= 0.29) 
+              active = false;
+            else
+              active = true;
+          }
+          else
+            active = false;
+        }
+        return [applicable, active, positive];
+      }
+
+      private OverplottingTransp() {
+        if (this.effects["OverplottingTransp"]["on"] == this.effects["OverplottingTransp"]["initial_on"]) return;
+        const m = this.currentSpec["mark"]
+        if (this.effects["OverplottingTransp"]["on"]) {
+          if (m.hasOwnProperty("opacity")) this.currentSpec["mark"]["opacity"] = 0.2
+          else {
+            const type = m;
+            this.currentSpec["mark"] = {"type":m, "opacity": 0.2};
+          }
+        }
+        else {
+          if (m.hasOwnProperty("opacity")) this.currentSpec["mark"]["opacity"] = 0.9
+          else {
+            const type = m;
+            this.currentSpec["mark"] = {"type":m, "opacity": 0.9};
+          }
+        }
       }
       /*
       private RedGrid() {

@@ -166,13 +166,13 @@ const init_plots = async (fromData = true) => {
   updatePlot("#vegaInit", specInit)
       .then(()=>{updatePlot("#vegaWork", curVegaSpec);})
       .then(()=>{
-        console.log(document.getElementsByClassName("mark-symbol role-mark marks")[0]);
         effector = new Effector(specInit, dataSummary);
         availableEffects = effector.getEffects();
-  // console.log(effector, curVegaSpec);
+  console.log(effector, curVegaSpec);
 
   document.getElementById("ZeroBox").hidden = true;
   document.getElementById("ColorSeqNominalBox").hidden = true;
+  document.getElementById("OverplottingTranspBox").hidden = true;
 
 
   if (availableEffects.hasOwnProperty("Zero")) {
@@ -183,6 +183,10 @@ const init_plots = async (fromData = true) => {
   if (availableEffects.hasOwnProperty("ColorSeqNominal")) {
     document.getElementById("ColorSeqNominalBox").hidden = false;
     (document.getElementById("ColorSeqNominal") as HTMLInputElement).checked = availableEffects["ColorSeqNominal"]["on"];
+  }
+  if (availableEffects.hasOwnProperty("OverplottingTransp")) {
+    document.getElementById("OverplottingTranspBox").hidden = false;
+    (document.getElementById("OverplottingTransp") as HTMLInputElement).checked = availableEffects["OverplottingTransp"]["on"];
   }
   });
 }
@@ -208,6 +212,7 @@ document.getElementById('generateFromSpec').addEventListener("click", ()=>{init_
 
 document.getElementById('Zero').addEventListener("click", ()=>{effectClick("Zero")});
 document.getElementById('ColorSeqNominal').addEventListener("click", ()=>{effectClick("ColorSeqNominal")});
+document.getElementById('OverplottingTransp').addEventListener("click", ()=>{effectClick("OverplottingTransp")});
 
 function effectClick(effect : string) {
   if ((document.getElementById(effect)as HTMLInputElement).checked) effector.activateEffect(effect);
