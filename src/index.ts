@@ -220,12 +220,13 @@ document.getElementById('ColorSeqNominal').addEventListener("click", ()=>{effect
 document.getElementById('OverplottingTransp').addEventListener("click", ()=>{effectClick("OverplottingTransp")});
 
 function effectClick(effect : string) {
-  if ((document.getElementById(effect)as HTMLInputElement).checked) effector.activateEffect(effect);
-  else effector.deactivateEffect(effect);
+  let msg : string;
+  if ((document.getElementById(effect)as HTMLInputElement).checked) msg = effector.activateEffect(effect);
+  else msg = effector.deactivateEffect(effect);
+  updateFeedback(msg, effector.currentScore , effector.maxScore);
   curVegaSpec = effector.getCurrentSpec();
   updatePlot("#vegaWork", curVegaSpec);
   updateScore(effector.currentScore, "R");
-  console.log(effector.currentScore, effector.maxScore);
 }
 
 // GoodOMeter
@@ -279,6 +280,10 @@ function updateScore(newScore: number, prefix = "R") {
     }
     else el.innerHTML = "";
   }
+}
+function updateFeedback(message : string, score : number, maxScore : number){
+  const fbk = document.getElementById("feedback");
+  fbk.innerHTML = score+" out of "+ maxScore + " guessed correctly!<br><br>"+message;
 }
 
 

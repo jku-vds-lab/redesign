@@ -3,6 +3,7 @@ export class Effector {
     private currentSpec : {};
     private effects : {};
     private dataSummary : any;
+    private latestFeedback : {};
     currentScore = 0;
     maxScore = 0;
 
@@ -17,6 +18,7 @@ export class Effector {
 
     detectEffects() {
       let res = {}
+      let msgs = {}
       const zeroStatus = this.checkZero();
       const colorSeqNominalStatus = this.checkColorSeqNominal();
       const overplottingTranspStatus = this.checkOverplottingTransp();
@@ -26,6 +28,7 @@ export class Effector {
           "positive":zeroStatus[2],
           "initial_on":zeroStatus[1]
         };
+        msgs["Zero"] = "";
       }
       if (colorSeqNominalStatus[0]) {
         res["ColorSeqNominal"] = {
@@ -33,6 +36,7 @@ export class Effector {
           "positive": colorSeqNominalStatus[2],
           "initial_on": colorSeqNominalStatus[1]
         }
+        msgs["ColorSeqNominal"] = "";
       }
       if (overplottingTranspStatus[0]) {
         res["OverplottingTransp"] = {
@@ -40,9 +44,11 @@ export class Effector {
           "positive": overplottingTranspStatus[2],
           "initial_on": overplottingTranspStatus[1]
         }
+        msgs["OverplottingTransp"] = "";
       }
       console.log(overplottingTranspStatus);
       this.effects = res;
+      this.latestFeedback = msgs;
     }
 
     getEffects() {
@@ -61,12 +67,14 @@ export class Effector {
         this.effects[effect]["on"] = true;
         this.applyEffects();
         this.calculateCurrentScore();
+        return this.latestFeedback[effect];
     }
 
     deactivateEffect(effect : string) {
         this.effects[effect]["on"] = false;
         this.applyEffects();
         this.calculateCurrentScore();
+        return this.latestFeedback[effect];
     }
     private calculateCurrentScore() {
       let score = 0;
@@ -156,6 +164,7 @@ export class Effector {
       }
 
       private Zero () {
+        const msg = "Without zero as a reference point it is much harder to compare values graphically. It usually exaggregates difference between values;";
         // if the effect was active initially an we are asked to activate it again
         // we return original user source regarding this effect, do nothing:
         if (this.effects["Zero"]["on"] == this.effects["Zero"]["initial_on"]) return;
@@ -193,6 +202,7 @@ export class Effector {
               this.currentSpec["encoding"]["x"]["scale"]["domain"] = [minVal - marg, maxVal - marg];
           }
         }
+        this.latestFeedback["Zero"] = msg;
       }
 
       private checkColorSeqNominal() {
@@ -219,6 +229,7 @@ export class Effector {
       }
 
       private ColorSeqNominal() {
+        const msg = "Sequential color scheme impies order of elements even if it represents a nominal attribute. In most cases it may lead to false judgements being drawn from the visualization.";
         if (this.effects["ColorSeqNominal"]["on"] == this.effects["ColorSeqNominal"]["initial_on"]) return;
         if (this.effects["ColorSeqNominal"]["on"]) {
           this.currentSpec["encoding"]["color"]["scale"]["scheme"] = "reds";
@@ -226,6 +237,7 @@ export class Effector {
         else {
           this.currentSpec["encoding"]["color"]["scale"]["scheme"] = "tableau10";
         }
+        this.latestFeedback["ColorSeqNominal"] = msg;
       }
 
       private checkOverplottingTransp() {
@@ -273,6 +285,7 @@ export class Effector {
       }
 
       private OverplottingTransp() {
+        const msg = "The situation when high dencity and overlapping of objects on a visualization cause problems in analyzing it is called Overplotting. Decreasing element opacity is one of ways to cope with it.";
         if (this.effects["OverplottingTransp"]["on"] == this.effects["OverplottingTransp"]["initial_on"]) return;
         const m = this.currentSpec["mark"]
         if (this.effects["OverplottingTransp"]["on"]) {
@@ -289,6 +302,7 @@ export class Effector {
             this.currentSpec["mark"] = {"type":m, "opacity": 0.9};
           }
         }
+        this.latestFeedback["OverplottingTransp"] = msg;
       }
       /*
       private RedGrid() {
