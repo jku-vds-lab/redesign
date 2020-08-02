@@ -12,6 +12,7 @@ export class Effector {
       this.dataSummary = dat_summ;
       this.detectEffects(); // creates dict of applicable effects also checking their current status (on/off)
       this.maxScore = Object.keys(this.effects).length;
+      this.currentScore = this.calculateCurrentScore();
     }
 
     detectEffects() {

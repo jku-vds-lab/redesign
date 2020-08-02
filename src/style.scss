@@ -132,52 +132,14 @@ button {
 .grid-container {
   display: grid;
   grid-template-columns: auto auto auto;
-  padding: 5px;
+  //padding: 5px;
 }
 .grid-item {
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 1px;
-  font-size: 10px;
+  padding-top: 2px;
+  font-size: 0.9vw;
   text-align: center;
-  padding-bottom: 15%;
+  padding-bottom: 2px;
   text-align: center;
-}
-
-.meter {
-  border: 1px solid black;
-}
-
-.grid-best {
-  background-color: rgba(175, 203, 255, 0.8);
-  color: rgba(0, 19, 53, 0.8);
-  padding: 1px;
-  font-size: 10px;
-  text-align: center;
-  padding-bottom: 15%;
-  text-align: center;
-}
-.grid-2ndbest {
-  background-color: rgba(236, 243, 255, 0.8);
-  padding: 1px;
-  font-size: 10px;
-  text-align: center;
-  padding-bottom: 15%;
-  text-align: center;
-}
-.grid-3rdbest {
-  background-color: rgba(254, 227, 232, 0.8);
-  padding: 1px;
-  font-size: 10px;
-  text-align: center;
-  padding-bottom: 15%;
-  text-align: center;
-}
-.grid-worst {
-  background-color: rgba(255, 175, 175, 0.8);
-  color: rgba(53, 0, 0, 0.8);
-  padding: 1px;
-  font-size: 10px;
-  text-align: center;
-  padding-bottom: 15%;
-  text-align: center;
+  min-height: 13px;
+  height: 15%;
 }

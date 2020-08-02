@@ -21,6 +21,7 @@ let curVegaSpec: any;
 let specInit: any;
 
 let availableEffects: any;
+let numAvailableEffects: number;
 
 const init_draco = async () => {
   draco_instance = await (new Draco().init());
@@ -174,6 +175,11 @@ const init_plots = async (fromData = true) => {
   document.getElementById("ColorSeqNominalBox").hidden = true;
   document.getElementById("OverplottingTranspBox").hidden = true;
 
+  numAvailableEffects = Object.keys(availableEffects).length;
+  initGoodometer(numAvailableEffects);
+  const score = effector.currentScore;
+  updateScore(score, "L");
+  updateScore(score, "R");
 
   if (availableEffects.hasOwnProperty("Zero")) {
     document.getElementById("ZeroBox").hidden = false;
@@ -199,7 +205,6 @@ const updatePlot = async (vegaId : string, spec = curVegaSpec) => {
 function openNav() {
   document.getElementById("data").style.width = "28%";
 }
-
 /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
 function closeNav() {
   document.getElementById("data").style.width = "0";
@@ -219,7 +224,62 @@ function effectClick(effect : string) {
   else effector.deactivateEffect(effect);
   curVegaSpec = effector.getCurrentSpec();
   updatePlot("#vegaWork", curVegaSpec);
+  updateScore(effector.currentScore, "R");
   console.log(effector.currentScore, effector.maxScore);
 }
+
+// GoodOMeter
+function initGoodometer(numEffects : number) {
+  const ggrid = document.getElementById("goodometer");
+  ggrid.innerHTML="";
+
+  for(let i=0; i <= numEffects; i++){
+    let left = document.createElement("div");
+    let middle = document.createElement("div");
+    let right = document.createElement("div");
+
+    left.setAttribute("class", "grid-item")
+    middle.setAttribute("class", "grid-item")
+    right.setAttribute("class", "grid-item")
+    
+    const red = 49 + i/numEffects*(229 - 49);
+    const green = 163 + i/numEffects*(245 - 163);
+    const blue = 84 + i/numEffects*(224 - 84);
+
+    const bgcolor = "rgb(" + red + "," + green + "," + blue + ")";
+
+    middle.style.backgroundColor = bgcolor;
+
+    if (i == 0)
+      middle.innerHTML = "Best";
+    else if (i == numEffects)
+      middle.innerHTML = "Worst";
+    else {
+      middle.innerHTML = "o";
+      middle.style.color = bgcolor;
+    }
+
+    right.setAttribute("id","Rscore-" + (numEffects - i));
+    left.setAttribute("id","Lscore-" + (numEffects - i));
+
+    ggrid.appendChild(left);
+    ggrid.appendChild(middle);
+    ggrid.appendChild(right);
+  }
+}
+
+function updateScore(newScore: number, prefix = "R") {
+  for(let i = 0; i <= numAvailableEffects; i++) {
+    const el = document.getElementById(prefix+"score-"+i);
+    if (i == newScore) {
+      if (prefix == "R")
+        el.innerHTML = "← Yours";
+      else
+        el.innerHTML = "Initial →";
+    }
+    else el.innerHTML = "";
+  }
+}
+
 
 init_draco();
