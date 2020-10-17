@@ -50,7 +50,6 @@ const init_draco = async () => {
                   );
                 }
             });
-
   dataSelector.disabled = false;
   (document.getElementById('generateFromData') as HTMLButtonElement).disabled = false;
 }
@@ -156,6 +155,7 @@ const init_plots = async (fromData = true) => {
     curVegaSpec = JSON.parse((document.getElementById("vega_spec")as HTMLInputElement).value);
     const dataURL = curVegaSpec["data"]["url"];
     await fetchDataset(dataURL).then(json => data = json).then(()=> {
+                    console.log(data);
                     draco_instance.prepareData(data);
                     dataSummary = draco_instance.getSchema();
     // TODO: reset dataset combobox and checkboxes to initial undefined state!!!
@@ -194,12 +194,17 @@ const init_plots = async (fromData = true) => {
     document.getElementById("OverplottingTranspBox").hidden = false;
     (document.getElementById("OverplottingTransp") as HTMLInputElement).checked = availableEffects["OverplottingTransp"]["on"];
   }
+  if (availableEffects.hasOwnProperty("Wallpaper")) {
+    document.getElementById("WallpaperBox").hidden = false;
+    (document.getElementById("Wallpaper") as HTMLInputElement).checked = availableEffects["OverplottingTransp"]["on"];
+  }
   });
 }
 
 /* VEGA */
 const updatePlot = async (vegaId : string, spec = curVegaSpec) => {
   await embed(vegaId, spec, {"renderer":"svg"});
+  //await embed(vegaId, spec);
 }
 // Sidebar
 function openNav() {
@@ -218,6 +223,7 @@ document.getElementById('generateFromSpec').addEventListener("click", ()=>{init_
 document.getElementById('Zero').addEventListener("click", ()=>{effectClick("Zero")});
 document.getElementById('ColorSeqNominal').addEventListener("click", ()=>{effectClick("ColorSeqNominal")});
 document.getElementById('OverplottingTransp').addEventListener("click", ()=>{effectClick("OverplottingTransp")});
+document.getElementById('Wallpaper').addEventListener("click", ()=>{effectClick("Wallpaper")});
 
 function effectClick(effect : string) {
   let msg : string;
@@ -287,5 +293,7 @@ function updateFeedback(message : string, score : number, maxScore : number){
 }
 
 
-init_draco();
+//init_draco();
 (document.getElementById("vega_spec") as HTMLInputElement).value = '{"$schema"\:"https://vega.github.io/schema/vega-lite/v3.json"\,"data"\:{"url"\:"cars.json"}\,"mark"\:"circle"\,"encoding"\:\{\n      "color"\:\{"type"\:"nominal"\,"field":"Origin"\,\n                    "scale"\:\{"scheme"\:"bluepurple"\}\}\,\n      "x"\:\{"type"\:"quantitative"\,\n             "field"\:"Weight_in_lbs"}\,\n      "y"\:{"type"\:"quantitative"\,\n             "field"\:"Horsepower"\,\n             "scale"\:{"zero"\:true\}\}\}\}';
+init_draco().then(() => {
+    init_plots(false);})

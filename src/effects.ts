@@ -22,6 +22,7 @@ export class Effector {
       const zeroStatus = this.checkZero();
       const colorSeqNominalStatus = this.checkColorSeqNominal();
       const overplottingTranspStatus = this.checkOverplottingTransp();
+      const walpaperStatus = this.checkWallpaper();
       if (zeroStatus[0] /* effect available */) {
         res["Zero"] = {
           "on":zeroStatus[1],
@@ -45,6 +46,14 @@ export class Effector {
           "initial_on": overplottingTranspStatus[1]
         }
         msgs["OverplottingTransp"] = "";
+      }
+      if (walpaperStatus[0]) {
+        res["Wallpaper"] = {
+          "on":walpaperStatus[1],
+          "positive":walpaperStatus[2],
+          "initial_on":walpaperStatus[1]
+        };
+        msgs["Wallpaper"] = "";
       }
       console.log(overplottingTranspStatus);
       this.effects = res;
@@ -91,8 +100,22 @@ export class Effector {
         if (this.effects.hasOwnProperty("Zero")) this.Zero();
         if (this.effects.hasOwnProperty("ColorSeqNominal")) this.ColorSeqNominal();
         if (this.effects.hasOwnProperty("OverplottingTransp")) this.OverplottingTransp();
+        if (this.effects.hasOwnProperty("Wallpaper")) this.Wallpaper();
     }
     // available effects
+      checkWallpaper(){
+        return [true, false, false];
+      }
+      Wallpaper(){
+        let a = document.getElementById("vegaWork") as HTMLElement;
+        if (this.effects["Wallpaper"]["on"]) a.style.backgroundImage = "url('https://media.istockphoto.com/vectors/diagonal-lines-texture-gray-design-seamless-striped-vector-geometric-vector-id924423238?b=1&k=6&m=924423238&s=612x612&w=0&h=6Oy89b2PAmSKwCPeYnN2urVH3CQPv5m6TlWbopvMiJ8=')"
+        else {
+            console.log("OFF@!");
+            a.style.backgroundImage = "none";
+          }
+      }
+
+      //
       private zeroActivityAxis(axis: String) {
         let active = true;
           if (!this.currentSpec["encoding"][axis].hasOwnProperty("scale")) {
@@ -304,149 +327,4 @@ export class Effector {
         }
         this.latestFeedback["OverplottingTransp"] = msg;
       }
-      /*
-      private RedGrid() {
-        let refresh = false;
-        if (this.currentSpec["encoding"].hasOwnProperty("x")) {
-          if (!this.currentSpec["encoding"]["x"].hasOwnProperty("axis")) {
-            this.currentSpec["encoding"]["x"]["axis"] = {};
-          }
-          this.currentSpec["encoding"]["x"]["axis"]["grid"] = true;
-          this.currentSpec["encoding"]["x"]["axis"]["gridColor"] = "red";
-          refresh = true;
-        }
-        if (this.currentSpec["encoding"].hasOwnProperty("y")) {
-          if (!this.currentSpec["encoding"]["y"].hasOwnProperty("axis")) {
-            this.currentSpec["encoding"]["y"]["axis"] = {};
-          }
-          this.currentSpec["encoding"]["y"]["axis"]["grid"] = true;
-          this.currentSpec["encoding"]["y"]["axis"]["gridColor"] = "red";
-          refresh = true;
-        }
-        if (refresh) {
-         // (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-         // updatePlot("vegaWork");
-            console.log("Red Grif applied, need to refresh the graph")
-        }
-      }
-      private BrightBackground() {
-        if (!this.currentSpec.hasOwnProperty("config")) {
-            this.currentSpec["config"] = {};
-        }
-        this.currentSpec["config"]["background"] = "#aa1111";
-      }
-      private addStars = () => {
-        if (!(this.currentSpec["mark"] == "text")) {
-          if ((this.currentSpec["encoding"]["x"]["type"] == "nominal")
-          ||(this.currentSpec["encoding"]["x"]["type"] == "ordinal")
-          ||(this.currentSpec["encoding"]["y"]["type"] == "nominal")
-          ||(this.currentSpec["encoding"]["y"]["type"] == "ordinal")) {
-            this.currentSpec["mark"] = "text";
-            this.currentSpec["encoding"]["text"] = {};
-            //console.log(this.currentSpec);
-            this.currentSpec["encoding"]["text"]["value"] = "⭐";
-          }
-        }
-      }
-      private addRainbow() {
-        if (this.currentSpec["encoding"]["x"]["type"] == "quantitative"){
-          this.currentSpec["encoding"]["color"] = {};
-          this.currentSpec["encoding"]["color"]["field"] = "quantitative";
-          this.currentSpec["encoding"]["color"]["scale"] = {"scheme":"rainbow"};
-          this.currentSpec["encoding"]["color"]["field"] = this.currentSpec["encoding"]["x"]["field"]
-        }
-        if (this.currentSpec["encoding"]["y"]["type"] == "quantitative"){
-          this.currentSpec["encoding"]["color"] = {};
-          this.currentSpec["encoding"]["color"]["field"] = "quantitative";
-          this.currentSpec["encoding"]["color"]["scale"] = {"scheme":"rainbow"};
-          this.currentSpec["encoding"]["color"]["field"] = this.currentSpec["encoding"]["y"]["field"];
-        }
-        }*/
 }
-/*
-const addGrid = () => {
-    let refresh = false;
-    if (curVegaSpec["encoding"].hasOwnProperty("x")) {
-      if (!curVegaSpec["encoding"]["x"].hasOwnProperty("axis")) {
-        curVegaSpec["encoding"]["x"]["axis"] = {};
-      }
-      curVegaSpec["encoding"]["x"]["axis"]["grid"] = true;
-      curVegaSpec["encoding"]["x"]["axis"]["gridColor"] = "red";
-      refresh = true;
-    }
-    if (curVegaSpec["encoding"].hasOwnProperty("y")) {
-      if (!curVegaSpec["encoding"]["y"].hasOwnProperty("axis")) {
-        curVegaSpec["encoding"]["y"]["axis"] = {};
-      }
-      curVegaSpec["encoding"]["y"]["axis"]["grid"] = true;
-      curVegaSpec["encoding"]["y"]["axis"]["gridColor"] = "red";
-      refresh = true;
-    }
-    if (refresh) {
-      (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-      updatePlot("vegaWork");
-    }
-  }
-  
-  const brightBackground = () => {
-    if (!curVegaSpec.hasOwnProperty("config")) {
-      curVegaSpec["config"] = {};
-    }
-    curVegaSpec["config"]["background"] = "#aa1111";
-    (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-    updatePlot("vegaWork");
-  }
-  
-  const addStars = () => {
-    if (!(curVegaSpec["mark"] == "text")) {
-      if ((curVegaSpec["encoding"]["x"]["type"] == "nominal")
-      ||(curVegaSpec["encoding"]["x"]["type"] == "ordinal")
-      ||(curVegaSpec["encoding"]["y"]["type"] == "nominal")
-      ||(curVegaSpec["encoding"]["y"]["type"] == "ordinal")) {
-        curVegaSpec["mark"] = "text";
-        curVegaSpec["encoding"]["text"] = {};
-        console.log(curVegaSpec);
-        curVegaSpec["encoding"]["text"]["value"] = "⭐";
-      }
-      (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-      updatePlot("vegaWork");
-    }
-  }
-  
-  const cutAxis = () => {
-    let refresh = false;
-    if (curVegaSpec["encoding"].hasOwnProperty("y")) {
-      if ((curVegaSpec["encoding"]["y"].hasOwnProperty("field"))
-            &&(curVegaSpec["encoding"]["y"]["type"] == "quantitative")) {
-        const fld = curVegaSpec["encoding"]["y"]["field"];
-        const summary = draco_instance.getSchema();
-        console.log(summary);
-        const minVal = summary["stats"][fld]["min"];
-        const maxVal = summary["stats"][fld]["max"];
-        console.log(minVal,maxVal);
-        const marg = maxVal * 0.1;
-        curVegaSpec["encoding"]["y"]["scale"] = {};
-        curVegaSpec["encoding"]["y"]["scale"]["domain"] = [minVal - marg, maxVal + marg];
-        refresh = true;
-      }
-    }
-    if (curVegaSpec["encoding"].hasOwnProperty("x")) {
-      if ((curVegaSpec["encoding"]["x"].hasOwnProperty("field"))
-          &&(curVegaSpec["encoding"]["x"]["type"]== "quantitative")) {
-        const fld = curVegaSpec["encoding"]["x"]["field"];
-        const summary = draco_instance.getSchema();
-        console.log(summary);
-        const minVal = summary["stats"][fld]["min"];
-        const maxVal = summary["stats"][fld]["max"];
-        console.log(minVal,maxVal);
-        const marg = maxVal * 0.1;
-        curVegaSpec["encoding"]["x"]["scale"] = {};
-        curVegaSpec["encoding"]["x"]["scale"]["domain"] = [minVal - marg, maxVal + marg];
-        refresh = true;
-      }
-    }
-    if (refresh) {
-      (document.getElementById("vega_spec")as HTMLInputElement).value = JSON.stringify(curVegaSpec).replace(/,\"/g,",\n\"");
-      updatePlot("vegaWork");
-    }
-  }*/
