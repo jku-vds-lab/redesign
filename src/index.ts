@@ -164,11 +164,19 @@ const init_plots = async (fromData = true) => {
   effector = undefined;
   specInit = curVegaSpec;
 
-  updatePlot("#vegaInit", specInit)
+  /*updatePlot("#vegaInit", specInit)
       .then(()=>{updatePlot("#vegaWork", curVegaSpec);})
       .then(()=>{
-        effector = new Effector(specInit, dataSummary);
-        availableEffects = effector.getEffects();
+        effector = new Effector(specInit, dataSummary, fromData);
+        availableEffects = effector.getEffects();*/
+  
+  //
+  effector = new Effector(specInit, dataSummary, fromData);
+  availableEffects = effector.getEffects();
+  curVegaSpec = effector.getCurrentSpec();
+  updatePlot("#vegaInit", curVegaSpec);
+  updatePlot("#vegaWork", curVegaSpec);
+  //
   console.log(effector, curVegaSpec);
 
   document.getElementById("ZeroBox").hidden = true;
@@ -204,7 +212,7 @@ const init_plots = async (fromData = true) => {
     document.getElementById("RoundBarsBox").hidden = false;
     (document.getElementById("RoundBars") as HTMLInputElement).checked = availableEffects["RoundBars"]["on"];
   }
-  });
+  //});
 }
 
 /* VEGA */

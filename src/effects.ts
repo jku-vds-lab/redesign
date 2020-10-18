@@ -1,3 +1,5 @@
+import { randomNormal } from 'd3';
+
 export class Effector {
     private initialSpec : {};
     private currentSpec : {};
@@ -8,8 +10,7 @@ export class Effector {
     currentScore = 0;
     maxScore = 0;
 
-    constructor(initialSpec : {}, dat_summ : any) {
-      console.log("EFFECTOR CONSTRUCTOR!");
+    constructor(initialSpec : {}, dat_summ : any, init_shuffle = false) {
       this.initialSpec = JSON.parse(JSON.stringify(initialSpec));
       this.currentSpec = JSON.parse(JSON.stringify(initialSpec));
       this.dataSummary = dat_summ;
@@ -21,8 +22,27 @@ export class Effector {
                          "RoundBars" : this.checkRoundBars};
 
       this.detectEffects(); // creates dict of applicable effects also checking their current status (on/off)
+      if (init_shuffle) this.initEffectsShuffle();
       this.maxScore = Object.keys(this.effects).length;
       this.currentScore = this.calculateCurrentScore();
+      this.applyEffects();
+    }
+
+    initEffectsShuffle(){
+      console.log("Effects have been shuffled.");
+      let chance = randomNormal();
+      Object.keys(this.effects).forEach(effect => {
+        const k = chance();
+        //console.log(effect, k);
+        if (k > 0) {
+          this.effects[effect]["on"] = true;
+          //this.effects[effect]["initial_on"] = true;
+        }
+        else {
+          this.effects[effect]["on"] = false;
+          //this.effects[effect]["initial_on"] = false;
+        }
+      });
     }
 
     detectEffects() {
@@ -111,14 +131,15 @@ export class Effector {
       return [applicable, active, positive];
     }
     RoundBars() {
+      let mk = this.currentSpec["mark"];
       if (this.effects["RoundBars"]["on"] == this.effects["RoundBars"]["initial_on"]) return;
       if (this.effects["RoundBars"]["on"]) {
-        let mk = this.currentSpec["mark"];
-        console.log(mk, "BWABWAA!");
         if (mk.hasOwnProperty("type")) this.currentSpec["mark"]["cornerRadius"] = 15;
         else this.currentSpec["mark"] = {"type": mk, "cornerRadius" : 15}
       }
-      console.log(this.currentSpec);
+      else {
+        this.currentSpec["mark"]["cornerRadius"] = 0;
+      }
     }
     //=====// 
     checkWallpaper(){
