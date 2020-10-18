@@ -174,6 +174,8 @@ const init_plots = async (fromData = true) => {
   document.getElementById("ZeroBox").hidden = true;
   document.getElementById("ColorSeqNominalBox").hidden = true;
   document.getElementById("OverplottingTranspBox").hidden = true;
+  document.getElementById("WallpaperBox").hidden = true;
+  document.getElementById("RoundBarsBox").hidden = true;
 
   numAvailableEffects = Object.keys(availableEffects).length;
   initGoodometer(numAvailableEffects);
@@ -196,7 +198,11 @@ const init_plots = async (fromData = true) => {
   }
   if (availableEffects.hasOwnProperty("Wallpaper")) {
     document.getElementById("WallpaperBox").hidden = false;
-    (document.getElementById("Wallpaper") as HTMLInputElement).checked = availableEffects["OverplottingTransp"]["on"];
+    (document.getElementById("Wallpaper") as HTMLInputElement).checked = availableEffects["Wallpaper"]["on"];
+  }
+  if (availableEffects.hasOwnProperty("RoundBars")) {
+    document.getElementById("RoundBarsBox").hidden = false;
+    (document.getElementById("RoundBars") as HTMLInputElement).checked = availableEffects["RoundBars"]["on"];
   }
   });
 }
@@ -224,6 +230,7 @@ document.getElementById('Zero').addEventListener("click", ()=>{effectClick("Zero
 document.getElementById('ColorSeqNominal').addEventListener("click", ()=>{effectClick("ColorSeqNominal")});
 document.getElementById('OverplottingTransp').addEventListener("click", ()=>{effectClick("OverplottingTransp")});
 document.getElementById('Wallpaper').addEventListener("click", ()=>{effectClick("Wallpaper")});
+document.getElementById('RoundBars').addEventListener("click", ()=>{effectClick("RoundBars")});
 
 function effectClick(effect : string) {
   let msg : string;
@@ -296,4 +303,5 @@ function updateFeedback(message : string, score : number, maxScore : number){
 //init_draco();
 (document.getElementById("vega_spec") as HTMLInputElement).value = '{"$schema"\:"https://vega.github.io/schema/vega-lite/v3.json"\,"data"\:{"url"\:"cars.json"}\,"mark"\:"circle"\,"encoding"\:\{\n      "color"\:\{"type"\:"nominal"\,"field":"Origin"\,\n                    "scale"\:\{"scheme"\:"bluepurple"\}\}\,\n      "x"\:\{"type"\:"quantitative"\,\n             "field"\:"Weight_in_lbs"}\,\n      "y"\:{"type"\:"quantitative"\,\n             "field"\:"Horsepower"\,\n             "scale"\:{"zero"\:true\}\}\}\}';
 init_draco().then(() => {
-    init_plots(false);})
+   init_plots(false);
+})
