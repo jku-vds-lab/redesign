@@ -318,14 +318,9 @@ function updateFeedback(message : string, oldScore : number,  score : number, ma
     $("#feedback-container").toggleClass("green");
     setTimeout(()=>{$("#feedback-container").toggleClass("green");}, 600);
   }
-  //const fbkc = document.getElementById("feedback-container") as HTMLDivElement; .css("backgroundColor", color)
-  //$("#feedback-container").toggleClass("green");
-  //fbkc.style.backgroundColor = color;
-  //$("#feedback-container").removeClass("green");
   const fbk = (document.getElementById("feedback"));
   fbk.innerHTML = score+" out of "+ maxScore + " guessed correctly!<br><br>"+message;
 }
-
 
 //init_draco();
 (document.getElementById("vega_spec") as HTMLInputElement).value = '{"$schema"\:"https://vega.github.io/schema/vega-lite/v3.json"\,"data"\:{"url"\:"cars.json"}\,"mark"\:"circle"\,"encoding"\:\{\n      "color"\:\{"type"\:"nominal"\,"field":"Origin"\,\n                    "scale"\:\{"scheme"\:"bluepurple"\}\}\,\n      "x"\:\{"type"\:"quantitative"\,\n             "field"\:"Weight_in_lbs"}\,\n      "y"\:{"type"\:"quantitative"\,\n             "field"\:"Horsepower"\,\n             "scale"\:{"zero"\:true\}\}\}\}';

@@ -141,6 +141,7 @@ export class Effector {
       else {
         this.currentSpec["mark"]["cornerRadius"] = 0;
       }
+      this.latestFeedback["RoundBars"] = "It is recommended to use rectangular bars in bar charts. Such shape allows for easier value estimation and comparison between bars."
     }
     //=====// 
     checkWallpaper(){
@@ -153,6 +154,7 @@ export class Effector {
       else {
           a.style.backgroundImage = "none";
         }
+        this.latestFeedback["Wallpaper"] = "It's advised to use flat neutral colors (preferrebly white) as background for your visualizations. Any kind of images and active colors on the background distract from the content and make the visualization unclear.<br>See E. Tufte's <a href='https://infovis-wiki.net/wiki/Data-Ink_Ratio'>Data-Ink Ratio<a>.";
     }
     //=====//
     private zeroActivityAxis(axis: String) {
@@ -291,7 +293,7 @@ export class Effector {
     }
 
     private ColorSeqNominal() {
-      const msg = "Sequential color scheme impies order of elements even if it represents a nominal attribute. In most cases it may lead to false judgements being drawn from the visualization.";
+      const msg = "Sequential color scheme impies order of elements even if it represents a nominal attribute. In most cases it may lead to false judgements being drawn from the visualization.<br>So use <a href='https://vega.github.io/vega/docs/schemes/#scheme-properties'>categotical color schemes<a> for nominal attributes (ones with unordered values).";
       if (this.effects["ColorSeqNominal"]["on"] == this.effects["ColorSeqNominal"]["initial_on"]) return;
       if (this.effects["ColorSeqNominal"]["on"]) {
         this.currentSpec["encoding"]["color"]["scale"]["scheme"] = "reds";
