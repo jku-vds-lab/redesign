@@ -112,7 +112,7 @@ textarea {
 }
 
 button {
-  border-radius: 4px;
+  border-radius: 5px;
   background-color: $input-background-color;
   font-size: 1vw;
 }
@@ -154,4 +154,15 @@ button {
   background-color: $input-background-color;
   padding: 15px;
   text-align: center;
+  transition: background-color 3s;
+}
+
+.feedback-container.green {
+  background-color: rgb(109,193,124);
+  transition: background-color 0.2s;
+}
+
+.feedback-container.red {
+  background-color: rgb(254,224,139);
+  transition: background-color 0.2s;
 }

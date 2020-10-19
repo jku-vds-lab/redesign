@@ -32,6 +32,7 @@ export class Effector {
       console.log("Effects have been shuffled.");
       let chance = randomNormal();
       Object.keys(this.effects).forEach(effect => {
+        if (effect == "Wallpaper") return;
         const k = chance();
         //console.log(effect, k);
         if (k > 0) {
@@ -147,6 +148,7 @@ export class Effector {
     }
     Wallpaper(){
       let a = document.getElementById("vegaWork") as HTMLElement;
+      a.style.borderRadius = "8px";
       if (this.effects["Wallpaper"]["on"]) a.style.backgroundImage = "url('https://media.istockphoto.com/vectors/diagonal-lines-texture-gray-design-seamless-striped-vector-geometric-vector-id924423238?b=1&k=6&m=924423238&s=612x612&w=0&h=6Oy89b2PAmSKwCPeYnN2urVH3CQPv5m6TlWbopvMiJ8=')"
       else {
           a.style.backgroundImage = "none";
@@ -304,9 +306,10 @@ export class Effector {
       // safety
       const allowedMarks = ["circle", "point"];
       const mk = this.currentSpec["mark"];
-      if (mk.hasOwnProperty("type") && !allowedMarks.includes(mk["type"]) || 
+      if ((mk.hasOwnProperty("type") && !allowedMarks.includes(mk["type"])) || 
           !allowedMarks.includes(mk)) return [false, undefined, true];
       // safety ^
+      console.log("passed safety");
       const overplottingFactorThreshold = 0.3;
 
       let applicable = undefined;

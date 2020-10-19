@@ -2,6 +2,7 @@ import './style.scss'; // import styles as described https://github.com/webpack-
 import {Effector} from './effects';
 import Draco from 'draco-vis';
 import embed from 'vega-embed';
+import * as $ from 'jquery';
 
 document.title = 'Worst-Yours-Best';
 
@@ -163,14 +164,12 @@ const init_plots = async (fromData = true) => {
   }
   effector = undefined;
   specInit = curVegaSpec;
-
-  /*updatePlot("#vegaInit", specInit)
-      .then(()=>{updatePlot("#vegaWork", curVegaSpec);})
-      .then(()=>{
-        effector = new Effector(specInit, dataSummary, fromData);
-        availableEffects = effector.getEffects();*/
-  
   //
+  updatePlot("#vegaInit", curVegaSpec)
+    .then(()=>{
+      document.getElementById("vegaInit").hidden = true;
+    })
+    .then(()=>{
   effector = new Effector(specInit, dataSummary, fromData);
   availableEffects = effector.getEffects();
   curVegaSpec = effector.getCurrentSpec();
@@ -190,6 +189,7 @@ const init_plots = async (fromData = true) => {
   const score = effector.currentScore;
   updateScore(score, "L");
   updateScore(score, "R");
+  updateFeedback("", score, effector.currentScore , effector.maxScore);
 
   if (availableEffects.hasOwnProperty("Zero")) {
     document.getElementById("ZeroBox").hidden = false;
@@ -212,7 +212,7 @@ const init_plots = async (fromData = true) => {
     document.getElementById("RoundBarsBox").hidden = false;
     (document.getElementById("RoundBars") as HTMLInputElement).checked = availableEffects["RoundBars"]["on"];
   }
-  //});
+  });
 }
 
 /* VEGA */
@@ -242,9 +242,10 @@ document.getElementById('RoundBars').addEventListener("click", ()=>{effectClick(
 
 function effectClick(effect : string) {
   let msg : string;
+  const oldScore = effector.currentScore;
   if ((document.getElementById(effect)as HTMLInputElement).checked) msg = effector.activateEffect(effect);
   else msg = effector.deactivateEffect(effect);
-  updateFeedback(msg, effector.currentScore , effector.maxScore);
+  updateFeedback(msg, oldScore, effector.currentScore , effector.maxScore);
   curVegaSpec = effector.getCurrentSpec();
   updatePlot("#vegaWork", curVegaSpec);
   updateScore(effector.currentScore, "R");
@@ -263,11 +264,15 @@ function initGoodometer(numEffects : number) {
     left.setAttribute("class", "grid-item")
     middle.setAttribute("class", "grid-item")
     right.setAttribute("class", "grid-item")
-    
-    const red = 49 + i/numEffects*(229 - 49);
+   
+    const red = 79 + i/numEffects*(254 - 79);
+    const green = 183 + i/numEffects*(224 - 183);
+    const blue = 104 + i/numEffects*(139 - 104);
+    //153,213,148 254,224,139
+   /*  const red = 49 + i/numEffects*(229 - 49);
     const green = 163 + i/numEffects*(245 - 163);
     const blue = 84 + i/numEffects*(224 - 84);
-
+ */
     const bgcolor = "rgb(" + red + "," + green + "," + blue + ")";
 
     middle.style.backgroundColor = bgcolor;
@@ -302,8 +307,22 @@ function updateScore(newScore: number, prefix = "R") {
     else el.innerHTML = "";
   }
 }
-function updateFeedback(message : string, score : number, maxScore : number){
-  const fbk = document.getElementById("feedback");
+function updateFeedback(message : string, oldScore : number,  score : number, maxScore : number){
+  if (oldScore > score) {
+    //color => "rgb(254,224,139)";
+    $("#feedback-container").toggleClass("red");
+    setTimeout(()=>{$("#feedback-container").toggleClass("red");}, 600);
+  }
+  else if (oldScore < score) {
+    //color => "rgb(109,193,124)";
+    $("#feedback-container").toggleClass("green");
+    setTimeout(()=>{$("#feedback-container").toggleClass("green");}, 600);
+  }
+  //const fbkc = document.getElementById("feedback-container") as HTMLDivElement; .css("backgroundColor", color)
+  //$("#feedback-container").toggleClass("green");
+  //fbkc.style.backgroundColor = color;
+  //$("#feedback-container").removeClass("green");
+  const fbk = (document.getElementById("feedback"));
   fbk.innerHTML = score+" out of "+ maxScore + " guessed correctly!<br><br>"+message;
 }
 

@@ -14,20 +14,22 @@
     "@types/d3": "^5.7.2",
     "@types/d3-fetch": "^1.1.5",
     "css-loader": "^3.2.0",
-    "node-sass": "^4.13.0",
+    "node-sass": "^4.14.1",
     "sass-loader": "^8.0.0",
     "style-loader": "^1.0.1",
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0"
+    "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "@types/jquery": "^3.5.3",
     "d3": "^5.15.0",
     "d3-fetch": "^1.1.2",
     "draco-vis": "latest",
     "file-system": "^2.2.2",
+    "jquery": "^3.5.1",
     "vega-embed": "^6.x",
     "vega-lite": "^3.x"
   }
