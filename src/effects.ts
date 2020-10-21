@@ -305,13 +305,15 @@ export class Effector {
     }
     //=====//
     private checkOverplottingTransp() {
+
+      this.checkOverplotting2();
+
       // safety
       const allowedMarks = ["circle", "point"];
       const mk = this.currentSpec["mark"];
       if ((mk.hasOwnProperty("type") && !allowedMarks.includes(mk["type"])) || 
           !allowedMarks.includes(mk)) return [false, undefined, true];
       // safety ^
-      console.log("passed safety");
       const overplottingFactorThreshold = 0.3;
 
       let applicable = undefined;
@@ -353,6 +355,119 @@ export class Effector {
           active = false;
       }
       return [applicable, active, positive];
+    }
+    // ==
+    private checkOverplotting2() {
+      //safety
+      const allowedMarks = ["circle", "point"];
+      const mk = this.currentSpec["mark"];
+      if ((mk.hasOwnProperty("type") && !allowedMarks.includes(mk["type"])) || 
+          !allowedMarks.includes(mk)) return [false, undefined, true];
+      // safety ^ 
+      console.log("HEY!");
+      const overplottingFactorThreshold = 0.3;
+
+      let applicable = undefined;
+      let active = undefined;
+      let positive = true;
+/*
+      const x = this.dataSummary["stats"][this.currentSpec["encoding"]["x"]["field"]];
+      const y = this.dataSummary["stats"][this.currentSpec["encoding"]["y"]["field"]];
+
+      const minx = x["min"];
+      const maxx = x["max"];
+
+      const miny = y["min"];
+      const maxy = y["max"];
+
+      console.log(this.dataSummary, this.currentSpec, minx, maxx, miny, maxy);
+*/
+      // calculating overplotting factor
+      // NumMarks * MarkBBoxArea / AllMarksBBoxArea
+      
+      // bounding element for all marks on the first plot
+      let marksGArr: HTMLCollectionOf<Element> | SVGGElement[];
+
+      marksGArr = document.getElementsByClassName("mark-symbol role-mark marks");
+      let marksG = (marksGArr[0]) as SVGGElement;
+
+      const marksGAtt = marksG.getBBox();
+      const allMarksBoundingArea = marksGAtt["width"] * marksGAtt["height"];
+
+      const markNodes = marksG.childNodes;
+
+      let maxX = undefined;
+      let maxY = undefined;
+      let minX = undefined;
+      let minY = undefined;
+      for(let i=0; i < markNodes.length; i++){
+        const coords = ((markNodes[i] as SVGGElement).getAttribute("transform") as string);
+        const coords_arr = coords.substring(10, coords.length -1).split(",");
+        let cMkx = 0;
+        let cMky = 0;
+        cMkx = parseFloat(coords_arr[0]);
+        cMky = parseFloat(coords_arr[1]);
+        //marksTotalArea += curMarkAtt["width"] * curMarkAtt["height"];
+        if ((maxX == undefined)||(cMkx > maxX)) maxX = cMkx;
+        if ((maxY == undefined)||(cMky > maxY)) maxY = cMky;
+        if ((minX == undefined)||(cMkx < minX)) minX = cMkx;
+        if ((minY == undefined)||(cMky < minY)) minY = cMky;
+        
+      }
+      console.log(minX, maxX, minY, maxY);
+      // sampling
+      
+      const samplingRate = this.dataSummary.size / 10;
+      const step = (maxX - minX) / samplingRate;
+      let graphFootprint = 0;
+      for(let i=0; i < samplingRate-1; i++){
+        let tmaxX = undefined;
+        let tmaxY = undefined;
+        let tminX = undefined;
+        let tminY = undefined;
+        for(let j=0; j < markNodes.length; j++){
+          const coords = ((markNodes[j] as SVGGElement).getAttribute("transform") as string);
+          const coords_arr = coords.substring(10, coords.length -1).split(",");
+          //console.log(coords, markNodes[i]);
+          const tMkx = parseFloat(coords_arr[0]);
+          const tMky = parseFloat(coords_arr[1]);
+          if((tMkx >= minX + step*i) &&
+              (tMkx <= minX + step*(i+1))){
+                if ((tmaxX == undefined) || (tMkx > tmaxX)) tmaxX = tMkx;
+                if ((tmaxY == undefined) || (tMky > tmaxY)) tmaxY = tMky;
+                if ((tminX == undefined) || (tMkx < tminX)) tminX = tMkx;
+                if ((tminY == undefined) || (tMky < tminY)) tminY = tMky;
+          }
+        }
+        if ((tmaxX != undefined) && 
+            (tminX != undefined) &&
+            (maxY != undefined) &&
+            (tminY != undefined)) {
+          console.log(tmaxX, tminX, tmaxY, tminY, "oba", (tmaxX - tminX) * (tmaxY - tminY));
+          graphFootprint += (tmaxX - tminX) * (tmaxY - tminY);
+          console.log(minX + step*i, minX + step*(i+1));
+        }
+      }
+      const overplottingFactor = graphFootprint / allMarksBoundingArea;
+      console.log("NEW:",overplottingFactor);
+      
+/*
+      const overplottingFactor = marksTotalArea / allMarksBoundingArea;
+      applicable = overplottingFactor >= overplottingFactorThreshold;
+      console.log(overplottingFactor);
+
+      if (applicable) {
+        const m = this.currentSpec["mark"];
+        if (m.hasOwnProperty("opacity")) {
+          if (m["opacity"] >= 0.29) 
+            active = false;
+          else
+            active = true;
+        }
+        else
+          active = false;
+      }
+      return [applicable, active, positive];*/
     }
 
     private OverplottingTransp() {

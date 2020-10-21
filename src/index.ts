@@ -217,7 +217,7 @@ const init_plots = async (fromData = true) => {
 
 /* VEGA */
 const updatePlot = async (vegaId : string, spec = curVegaSpec) => {
-  await embed(vegaId, spec, {"renderer":"svg"});
+  await embed(vegaId, spec, {"renderer":"svg", "actions": false});
   //await embed(vegaId, spec);
 }
 // Sidebar
