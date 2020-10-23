@@ -3,6 +3,7 @@ import {Effector} from './effects';
 import Draco from 'draco-vis';
 import embed from 'vega-embed';
 import * as $ from 'jquery';
+import { randomNormal } from 'd3';
 
 document.title = 'Worst-Yours-Best';
 
@@ -189,7 +190,9 @@ const init_plots = async (fromData = true) => {
   const score = effector.currentScore;
   updateScore(score, "L");
   updateScore(score, "R");
-  updateFeedback("", score, effector.currentScore , effector.maxScore);
+  // feedback
+  $("#feedback-container").removeClass("red green pale-green pale-red")
+  updateFeedback("", score, effector.currentScore , effector.maxScore, true);
 
   if (availableEffects.hasOwnProperty("Zero")) {
     document.getElementById("ZeroBox").hidden = false;
@@ -307,19 +310,32 @@ function updateScore(newScore: number, prefix = "R") {
     else el.innerHTML = "";
   }
 }
-function updateFeedback(message : string, oldScore : number,  score : number, maxScore : number){
+function updateFeedback(message : string, oldScore : number,  score : number, maxScore : number, initial = false){
+  let cheer = "";
   if (oldScore > score) {
     //color => "rgb(254,224,139)";
     $("#feedback-container").removeClass("red green pale-green pale-red").toggleClass("red");
     setTimeout(()=>{$("#feedback-container").toggleClass("pale-red").removeClass("red")}, 600);
   }
   else if (oldScore < score) {
+    cheer += "keep it up, ";
     //color => "rgb(109,193,124)";
     $("#feedback-container").removeClass("red green pale-green pale-red").toggleClass("green");
     setTimeout(()=>{$("#feedback-container").toggleClass("pale-green").removeClass("green");}, 600);
   }
   const fbk = (document.getElementById("feedback"));
-  fbk.innerHTML = score+" out of "+ maxScore + " guessed correctly!<br><br>"+message;
+
+  if (initial) cheer = "are correct, but why?";
+  else
+    if ((maxScore - score) == 1) cheer += "almost there!";
+    else
+      if (score == maxScore) cheer = "full house!";
+      else
+        if (score == 1) cheer += "it is not the worst."
+        else {
+          cheer += "still a way to go!";
+        }
+  fbk.innerHTML = score+" out of "+ maxScore + " - "+cheer+"<br><br>"+message;
 }
 
 //init_draco();
