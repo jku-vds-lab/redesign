@@ -310,13 +310,13 @@ function updateScore(newScore: number, prefix = "R") {
 function updateFeedback(message : string, oldScore : number,  score : number, maxScore : number){
   if (oldScore > score) {
     //color => "rgb(254,224,139)";
-    $("#feedback-container").toggleClass("red");
-    setTimeout(()=>{$("#feedback-container").toggleClass("red");}, 600);
+    $("#feedback-container").removeClass("red green pale-green pale-red").toggleClass("red");
+    setTimeout(()=>{$("#feedback-container").toggleClass("pale-red").removeClass("red")}, 600);
   }
   else if (oldScore < score) {
     //color => "rgb(109,193,124)";
-    $("#feedback-container").toggleClass("green");
-    setTimeout(()=>{$("#feedback-container").toggleClass("green");}, 600);
+    $("#feedback-container").removeClass("red green pale-green pale-red").toggleClass("green");
+    setTimeout(()=>{$("#feedback-container").toggleClass("pale-green").removeClass("green");}, 600);
   }
   const fbk = (document.getElementById("feedback"));
   fbk.innerHTML = score+" out of "+ maxScore + " guessed correctly!<br><br>"+message;

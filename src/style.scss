@@ -154,7 +154,7 @@ button {
   background-color: $input-background-color;
   padding: 15px;
   text-align: center;
-  transition: background-color 3s;
+  //transition: background-color 3s;
 }
 
 .feedback-container.green {
@@ -162,7 +162,17 @@ button {
   transition: background-color 0.2s;
 }
 
+.feedback-container.pale-green {
+  background-color: rgb(185, 214, 191);
+  transition: background-color 3s;
+}
+
 .feedback-container.red {
   background-color: rgb(254,224,139);
   transition: background-color 0.2s;
+}
+
+.feedback-container.pale-red {
+  background-color: rgb(255, 245, 217);
+  transition: background-color 3s;
 }
