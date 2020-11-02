@@ -188,6 +188,7 @@ const init_plots = async (fromData = true) => {
   document.getElementById("OverplottingTranspBox").hidden = true;
   document.getElementById("WallpaperBox").hidden = true;
   document.getElementById("RoundBarsBox").hidden = true;
+  (document.getElementById("Sampling") as HTMLInputElement).checked = false;
 
   numAvailableEffects = effector.maxScore;
   initGoodometer(numAvailableEffects);
