@@ -340,7 +340,7 @@ function updateScore(newScore: number, prefix = "R") {
 
 function updateFeedback(message : string, oldScore : number,  score : number, maxScore : number, initial = false){
   let cheer = "";
-  if (oldScore > score) {
+  if (oldScore >= score) {
     //color => "rgb(254,224,139)";
     $("#feedback-container").removeClass("red green pale-green pale-red").toggleClass("red");
     setTimeout(()=>{$("#feedback-container").toggleClass("pale-red").removeClass("red")}, 600);
