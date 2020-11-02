@@ -2,7 +2,7 @@ $header-color: rgb(0, 0, 0); // Sass variable: https://sass-lang.com/guide
 $text-color: rgb(0, 0, 0);
 $background-color: rgb(220,220,225);
 $div-background-color: rgb(255,255,255);
-$input-background-color: rgb(240,240,240);
+$input-background-color: rgb(232,232,232);
 
 h1 { 
   text-align: center;
@@ -148,6 +148,33 @@ button {
   text-align: center;
   min-height: 13px;
 }
+
+.sub-effect{
+  border-radius: 8px;
+  background-color: $input-background-color;
+  transition: background-color 1.5s;
+  margin: 5px;
+  padding: 3px;
+}
+
+.effect-box {
+  border-radius: 8px;
+  background-color: $input-background-color;
+  margin-bottom: 5px;
+  padding: 1px
+}
+
+.sub-effect.green{
+  background-color: rgb(109,193,124);
+  transition: background-color 0.2s;
+}
+
+.sub-effect.yellow{
+  background-color: rgb(255, 245, 217);
+  transition: background-color 0.2s;
+}
+
+
 .feedback-container {
   width: 80%;
   border-radius: 8px;

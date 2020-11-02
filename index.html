@@ -58,11 +58,18 @@
                 <div class="effects-container">
                     <div hidden=true><input type="checkbox" id="RedGrid" name="RedGrid" ><label for="RedGrid">Red Grid lines</label><br></div>
                     <div hidden=true><input type="checkbox" id="BrightBackground" name="BrightBackground"><label for="BrightBackground">Bright Background</label><br></div>
-                    <div id = "ZeroBox" hidden=true><input type="checkbox" id="Zero" name="Zero"><label for="Zero">Force Zero into Quantitative Ranges on Axis</label><br></div>
-                    <div id = 'ColorSeqNominalBox' hidden=true><input type="checkbox" id="ColorSeqNominal" name="ColorSeqNominal"><label for="ColorSeqNominal">Apply Sequential Color Scheme</label><br></div>
-                    <div id = 'OverplottingTranspBox' hidden=true><input type="checkbox" id="OverplottingTransp" name="OverplottingTransp"><label for="OverplottingTransp">Set low opacity of the marks</label><br></div>
-                    <div id = "WallpaperBox" hidden=true><input type="checkbox" id="Wallpaper" name="Wallpaper" ><label for="Wallpaper">Add a wallpaper</label><br></div>
-                    <div id = "RoundBarsBox" hidden=true><input type="checkbox" id="RoundBars" name="RoundBars"><label for="RoundBars">Apply round corners to bars</label><br></div>
+                    <div id = "ZeroBox" hidden=true class="effect-box">
+                        <div class="sub-effect"><input type="checkbox" id="Zero" name="Zero"><label for="Zero">Force Zero into Quantitative Ranges on Axis</label><br></div></div>
+                    <div id = 'ColorSeqNominalBox' hidden=true class="effect-box">
+                        <div class="sub-effect"><input type="checkbox" id="ColorSeqNominal" name="ColorSeqNominal"><label for="ColorSeqNominal">Apply Sequential Color Scheme</label><br></div></div>
+                    <div id = 'OverplottingTranspBox' hidden=true class="effect-box">
+                        <div id = "OverplottingTranspSubBox" class="sub-effect"><input type="checkbox" id="OverplottingTransp" name="OverplottingTransp"><label for="OverplottingTransp">Set low opacity of the marks 🤔</label><br></div>
+                    
+                        <div id = "SamplingBox" hidden=true class="sub-effect"><input type="checkbox" id="Sampling" name="Sampling"><label for="Sampling">Sample 25% of your data</label><br></div></div>
+                    <div id = "WallpaperBox" hidden=true class="effect-box">
+                        <div class="sub-effect"><input type="checkbox" id="Wallpaper" name="Wallpaper" ><label for="Wallpaper">Add a subtle texture as a wallpaper</label><br></div></div>
+                    <div id = "RoundBarsBox" hidden=true class="effect-box">
+                        <div class="sub-effect"><input type="checkbox" id="RoundBars" name="RoundBars"><label for="RoundBars">Apply round corners to bars</label><br></div></div>
                 </div>
             </div>
             <div class="Container-low">

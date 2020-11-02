@@ -25,6 +25,9 @@ let specInit: any;
 let availableEffects: any;
 let numAvailableEffects: number;
 
+let samplingUnlocked = false;
+let samplingTried = false;
+
 const init_draco = async () => {
   draco_instance = await (new Draco().init());
   let dataSelector = (document.getElementById('selectData') as HTMLSelectElement);
@@ -172,6 +175,7 @@ const init_plots = async (fromData = true) => {
     })
     .then(()=>{
   effector = new Effector(specInit, dataSummary, fromData);
+  if (samplingUnlocked) effector.unlockSampling();
   availableEffects = effector.getEffects();
   curVegaSpec = effector.getCurrentSpec();
   updatePlot("#vegaInit", curVegaSpec);
@@ -185,7 +189,7 @@ const init_plots = async (fromData = true) => {
   document.getElementById("WallpaperBox").hidden = true;
   document.getElementById("RoundBarsBox").hidden = true;
 
-  numAvailableEffects = Object.keys(availableEffects).length;
+  numAvailableEffects = effector.maxScore;
   initGoodometer(numAvailableEffects);
   const score = effector.currentScore;
   updateScore(score, "L");
@@ -215,6 +219,10 @@ const init_plots = async (fromData = true) => {
     document.getElementById("RoundBarsBox").hidden = false;
     (document.getElementById("RoundBars") as HTMLInputElement).checked = availableEffects["RoundBars"]["on"];
   }
+  if (availableEffects.hasOwnProperty("Sampling")) {
+    document.getElementById("SamplingBox").hidden = false;
+    (document.getElementById("Sampling") as HTMLInputElement).checked = availableEffects["Sampling"]["on"];
+  }
   });
 }
 
@@ -242,6 +250,24 @@ document.getElementById('ColorSeqNominal').addEventListener("click", ()=>{effect
 document.getElementById('OverplottingTransp').addEventListener("click", ()=>{effectClick("OverplottingTransp")});
 document.getElementById('Wallpaper').addEventListener("click", ()=>{effectClick("Wallpaper")});
 document.getElementById('RoundBars').addEventListener("click", ()=>{effectClick("RoundBars")});
+document.getElementById('Sampling').addEventListener("click", ()=>{
+  const effect = 'Sampling';
+  let msg : string;
+  const oldScore = effector.currentScore;
+  if ((document.getElementById(effect)as HTMLInputElement).checked) {
+    if (!samplingTried) {
+      effector.deactivateEffect("OverplottingTransp");
+      (document.getElementById("OverplottingTransp")as HTMLInputElement).checked = false;
+      samplingTried = true;
+    }
+    msg = effector.activateEffect(effect);
+  }
+  else msg = effector.deactivateEffect(effect);
+  updateFeedback(msg, oldScore, effector.currentScore , effector.maxScore);
+  curVegaSpec = effector.getCurrentSpec();
+  updatePlot("#vegaWork", curVegaSpec);
+  updateScore(effector.currentScore, "R");
+});
 
 function effectClick(effect : string) {
   let msg : string;
@@ -310,6 +336,7 @@ function updateScore(newScore: number, prefix = "R") {
     else el.innerHTML = "";
   }
 }
+
 function updateFeedback(message : string, oldScore : number,  score : number, maxScore : number, initial = false){
   let cheer = "";
   if (oldScore > score) {
@@ -335,11 +362,43 @@ function updateFeedback(message : string, oldScore : number,  score : number, ma
         else {
           cheer += "still a way to go!";
         }
-  fbk.innerHTML = score+" out of "+ maxScore + " - "+cheer+"<br><br>"+message;
+  // 
+  let warn = "";
+  if (samplingUnlocked &&
+    (document.getElementById("Sampling") as HTMLInputElement).checked &&
+    (document.getElementById("OverplottingTransp") as HTMLInputElement).checked) {
+      $("#OverplottingTranspSubBox").addClass("yellow");
+      $("#SamplingBox").addClass("yellow");
+      warn = "<br><br><div class=\"sub-effect yellow\">Using sampling and opacity together would require to manually adjust sampling rate and opacity value.<br>Othervise your plot may lack definition.</div>";
+    }
+  else {
+    $("#OverplottingTranspSubBox").removeClass("yellow");
+    $("#SamplingBox").removeClass("yellow");
+  }
+  fbk.innerHTML = score+" out of "+ maxScore + " - "+cheer+"<br><br>"+message+warn;
+  // dealing with bonus effects //
+  if (message.includes("SamplingBonus")) {
+    let el = document.getElementById("SamplingBonus");
+    el.onclick = ()=>{
+      if (!availableEffects.hasOwnProperty("Sampling")) {
+        effector.unlockSampling();
+        samplingUnlocked = true;
+        availableEffects = effector.getEffects();
+        numAvailableEffects = effector.maxScore;
+        /*initGoodometer(numAvailableEffects);
+        const score = effector.calculateCurrentScore();
+        updateScore(score, "L");
+        updateScore(score, "R");*/
+      }
+      document.getElementById("SamplingBox").hidden = false;
+      $("#SamplingBox").addClass("green");
+      setTimeout(()=>{$("#SamplingBox").removeClass("green");}, 600);
+      return false;
+    }
+  }
 }
 
-//init_draco();
 (document.getElementById("vega_spec") as HTMLInputElement).value = '{"$schema"\:"https://vega.github.io/schema/vega-lite/v3.json"\,"data"\:{"url"\:"cars.json"}\,"mark"\:"circle"\,"encoding"\:\{\n      "color"\:\{"type"\:"nominal"\,"field":"Origin"\,\n                    "scale"\:\{"scheme"\:"bluepurple"\}\}\,\n      "x"\:\{"type"\:"quantitative"\,\n             "field"\:"Weight_in_lbs"}\,\n      "y"\:{"type"\:"quantitative"\,\n             "field"\:"Horsepower"\,\n             "scale"\:{"zero"\:true\}\}\}\}';
 init_draco().then(() => {
    init_plots(false);
-})
+});

@@ -14,12 +14,13 @@ export class Effector {
       this.initialSpec = JSON.parse(JSON.stringify(initialSpec));
       this.currentSpec = JSON.parse(JSON.stringify(initialSpec));
       this.dataSummary = dat_summ;
-
       this.allEffects = {"Zero" : this.checkZero,
                          "ColorSeqNominal" : this.checkColorSeqNominal,
                          "OverplottingTransp" : this.checkOverplottingTransp,
                          "Wallpaper" : this.checkWallpaper,
-                         "RoundBars" : this.checkRoundBars};
+                         "RoundBars" : this.checkRoundBars,
+                         "Sampling" : ()=>{return [false, undefined, undefined];}
+                        };
 
       this.detectEffects(); // creates dict of applicable effects also checking their current status (on/off)
       if (init_shuffle) this.initEffectsShuffle();
@@ -32,7 +33,7 @@ export class Effector {
       console.log("Effects have been shuffled.");
       let chance = randomNormal();
       Object.keys(this.effects).forEach(effect => {
-        if (effect == "Wallpaper") return;
+        if (["Wallpaper"].includes(effect)) return;
         const k = chance();
         //console.log(effect, k);
         if (k > 0) {
@@ -95,12 +96,19 @@ export class Effector {
         this.calculateCurrentScore();
         return this.latestFeedback[effect];
     }
-    private calculateCurrentScore() {
+    calculateCurrentScore() {
       let score = 0;
+      let overplottingSolved = false;
       Object.keys(this.effects).forEach(element => {
         const curEffect = this.effects[element];
+        if ((element == "OverplottingTransp")||(element == "Sampling")) {
+          //console.log(overplottingSolved, (curEffect["on"] == curEffect["positive"]));
+          overplottingSolved = overplottingSolved || (curEffect["on"] == curEffect["positive"]);
+        }
+        else
         if (curEffect["on"] == curEffect["positive"]) score++; 
       });
+      if (overplottingSolved) score++;
       this.currentScore = score;
       return score;
     }
@@ -112,8 +120,24 @@ export class Effector {
         if (this.effects.hasOwnProperty("OverplottingTransp")) this.OverplottingTransp();
         if (this.effects.hasOwnProperty("Wallpaper")) this.Wallpaper();
         if (this.effects.hasOwnProperty("RoundBars")) this.RoundBars();
+        if (this.effects.hasOwnProperty("Sampling")) this.Sampling();
     }
     // available effects
+    Sampling() {
+      const newDataLen = (this.dataSummary["size"] as number)/ 4;
+      this.latestFeedback["Sampling"] = "Sampling can be used to alleviate overplotting when it is acceptable to display only subset of datapoints shownig only approximate shape of their distribution.";
+      if (this.effects["Sampling"]["on"] == this.effects["Sampling"]["initial_on"]) return;
+      if (this.currentSpec.hasOwnProperty("transform")) {
+        //console.log("transform in place ", this.currentSpec["transform"])
+        let sp = this.currentSpec["transform"].filter(function(el){return el.hasOwnProperty("sample")})[0];
+        if (sp) sp.sample = sp.sample / 4;
+        else this.currentSpec["transform"].push({"sample":newDataLen});
+        return;
+      }
+      //console.log(this.currentSpec);
+      this.currentSpec["transform"] = [{"sample":newDataLen}];
+    }
+    //=====//
     checkRoundBars() {
       let applicable = undefined;
       let active = undefined;
@@ -154,7 +178,7 @@ export class Effector {
       else {
           a.style.backgroundImage = "none";
         }
-        this.latestFeedback["Wallpaper"] = "It's advised to use flat neutral colors (preferrebly white) as background for your visualizations. Any kind of images and active colors on the background distract from the content and make the visualization unclear.<br>See E. Tufte's <a href='https://infovis-wiki.net/wiki/Data-Ink_Ratio'>Data-Ink Ratio<a>.";
+        this.latestFeedback["Wallpaper"] = "It's advised to use flat neutral colors (preferrebly white) as background for your visualizations. Any kind of images and active colors on the background distract from the content and make your visualization unclear.<br>See E. Tufte's <a href='https://infovis-wiki.net/wiki/Data-Ink_Ratio'>Data-Ink Ratio<a>.";
     }
     //=====//
     private zeroActivityAxis(axis: String) {
@@ -293,7 +317,7 @@ export class Effector {
     }
 
     private ColorSeqNominal() {
-      const msg = "Sequential color scheme impies order of elements even if it represents a nominal attribute. In most cases it may lead to false judgements being drawn from the visualization.<br>So use <a href='https://vega.github.io/vega/docs/schemes/#scheme-properties'>categotical color schemes<a> for nominal attributes (ones with unordered values).";
+      const msg = "Sequential color scheme assumes some order of elements even if it represents a nominal attribute. In most cases it may lead to false judgements being drawn from the visualization.<br>So use <a href='https://vega.github.io/vega/docs/schemes/#scheme-properties'>categotical color schemes<a> for nominal attributes (ones with unordered values).";
       if (this.effects["ColorSeqNominal"]["on"] == this.effects["ColorSeqNominal"]["initial_on"]) return;
       if (this.effects["ColorSeqNominal"]["on"]) {
         this.currentSpec["encoding"]["color"]["scale"]["scheme"] = "reds";
@@ -306,7 +330,7 @@ export class Effector {
     //=====//
     private checkOverplottingTransp() {
 
-      this.checkOverplotting2();
+      //return this.checkOverplotting2();
 
       // safety
       const allowedMarks = ["circle", "point"];
@@ -341,7 +365,7 @@ export class Effector {
 
       const overplottingFactor = marksTotalArea / allMarksBoundingArea;
       applicable = overplottingFactor >= overplottingFactorThreshold;
-      console.log(overplottingFactor);
+      console.log(overplottingFactor, "from", marksTotalArea, allMarksBoundingArea);
 
       if (applicable) {
         const m = this.currentSpec["mark"];
@@ -364,24 +388,12 @@ export class Effector {
       if ((mk.hasOwnProperty("type") && !allowedMarks.includes(mk["type"])) || 
           !allowedMarks.includes(mk)) return [false, undefined, true];
       // safety ^ 
-      console.log("HEY!");
-      const overplottingFactorThreshold = 0.3;
+      const overplottingFactorThreshold = 0.64;
 
       let applicable = undefined;
       let active = undefined;
       let positive = true;
-/*
-      const x = this.dataSummary["stats"][this.currentSpec["encoding"]["x"]["field"]];
-      const y = this.dataSummary["stats"][this.currentSpec["encoding"]["y"]["field"]];
 
-      const minx = x["min"];
-      const maxx = x["max"];
-
-      const miny = y["min"];
-      const maxy = y["max"];
-
-      console.log(this.dataSummary, this.currentSpec, minx, maxx, miny, maxy);
-*/
       // calculating overplotting factor
       // NumMarks * MarkBBoxArea / AllMarksBBoxArea
       
@@ -397,35 +409,44 @@ export class Effector {
       const markNodes = marksG.childNodes;
 
       let maxX = undefined;
+      let maxXw = undefined;
+      let maxXh = undefined;
       let maxY = undefined;
       let minX = undefined;
+      let minXw = undefined;
+      let minXh = undefined;
       let minY = undefined;
       for(let i=0; i < markNodes.length; i++){
         const coords = ((markNodes[i] as SVGGElement).getAttribute("transform") as string);
+        const wd = (markNodes[i] as SVGGElement).getBBox()["width"];
+        const hg = (markNodes[i] as SVGGElement).getBBox()["height"];
         const coords_arr = coords.substring(10, coords.length -1).split(",");
         let cMkx = 0;
         let cMky = 0;
         cMkx = parseFloat(coords_arr[0]);
         cMky = parseFloat(coords_arr[1]);
         //marksTotalArea += curMarkAtt["width"] * curMarkAtt["height"];
-        if ((maxX == undefined)||(cMkx > maxX)) maxX = cMkx;
+        if ((maxX == undefined)||(cMkx > maxX)) {maxX = cMkx; maxXw = wd; maxXh = hg;};
         if ((maxY == undefined)||(cMky > maxY)) maxY = cMky;
-        if ((minX == undefined)||(cMkx < minX)) minX = cMkx;
+        if ((minX == undefined)||(cMkx < minX)) {minX = cMkx; minXw = wd; minXh = hg;};
         if ((minY == undefined)||(cMky < minY)) minY = cMky;
         
       }
-      console.log(minX, maxX, minY, maxY);
       // sampling
       
-      const samplingRate = this.dataSummary.size / 10;
-      const step = (maxX - minX) / samplingRate;
+      const samplingRate = (markNodes.length +1);
+      const step = (maxX + maxXw/2 - minX + minXw/2) / samplingRate;
+      //console.log(minX, minXw, maxX, maxXw, step);
       let graphFootprint = 0;
-      for(let i=0; i < samplingRate-1; i++){
+      let marksTotalArea = 0;
+      for(let i=0; i <= samplingRate-1; i++){
         let tmaxX = undefined;
         let tmaxY = undefined;
         let tminX = undefined;
         let tminY = undefined;
         for(let j=0; j < markNodes.length; j++){
+          const wd = (markNodes[j] as SVGGElement).getBBox()["width"];
+          const hg = (markNodes[j] as SVGGElement).getBBox()["height"];
           const coords = ((markNodes[j] as SVGGElement).getAttribute("transform") as string);
           const coords_arr = coords.substring(10, coords.length -1).split(",");
           //console.log(coords, markNodes[i]);
@@ -433,28 +454,26 @@ export class Effector {
           const tMky = parseFloat(coords_arr[1]);
           if((tMkx >= minX + step*i) &&
               (tMkx <= minX + step*(i+1))){
-                if ((tmaxX == undefined) || (tMkx > tmaxX)) tmaxX = tMkx;
-                if ((tmaxY == undefined) || (tMky > tmaxY)) tmaxY = tMky;
-                if ((tminX == undefined) || (tMkx < tminX)) tminX = tMkx;
-                if ((tminY == undefined) || (tMky < tminY)) tminY = tMky;
+                marksTotalArea += wd * hg;
+                if ((tmaxX == undefined) || (tMkx + hg/2 > tmaxX)) tmaxX = tMkx + wd/2;
+                if ((tmaxY == undefined) || (tMky + wd/2 > tmaxY)) tmaxY = tMky + hg/2;
+                if ((tminX == undefined) || (tMkx - hg/2 < tminX)) tminX = tMkx - wd/2;
+                if ((tminY == undefined) || (tMky - wd/2 < tminY)) tminY = tMky - hg/2;
           }
         }
         if ((tmaxX != undefined) && 
             (tminX != undefined) &&
             (maxY != undefined) &&
             (tminY != undefined)) {
-          console.log(tmaxX, tminX, tmaxY, tminY, "oba", (tmaxX - tminX) * (tmaxY - tminY));
+          //console.log(tmaxX, tminX, tmaxY, tminY, "oba", (tmaxX - tminX) * (tmaxY - tminY));
           graphFootprint += (tmaxX - tminX) * (tmaxY - tminY);
-          console.log(minX + step*i, minX + step*(i+1));
         }
       }
-      const overplottingFactor = graphFootprint / allMarksBoundingArea;
-      console.log("NEW:",overplottingFactor);
-      
-/*
-      const overplottingFactor = marksTotalArea / allMarksBoundingArea;
+      const overplottingFactor = marksTotalArea / graphFootprint;
+      console.log("NEW:",overplottingFactor, "\nfrom: ", marksTotalArea, graphFootprint);
+    
       applicable = overplottingFactor >= overplottingFactorThreshold;
-      console.log(overplottingFactor);
+      //console.log(overplottingFactor);
 
       if (applicable) {
         const m = this.currentSpec["mark"];
@@ -467,18 +486,28 @@ export class Effector {
         else
           active = false;
       }
-      return [applicable, active, positive];*/
+      return [applicable, active, positive];
+    }
+
+    unlockSampling() {
+      if (!this.effects.hasOwnProperty("OverplottingTransp")) return;
+      const op = this.effects["OverplottingTransp"];
+      this.effects["Sampling"] = {"on" : false,
+                                  "positive" : op["positive"],
+                                  "initial_on" : false};
+      this.latestFeedback["Sampling"] = "";
+      //this.maxScore +=1;
     }
 
     private OverplottingTransp() {
-      const msg = "The situation when high dencity and overlapping of objects on a visualization cause problems in analyzing it is called Overplotting. Decreasing element opacity is one of ways to cope with it.";
+      const msg = "Reducing opacity of marks is one of ways to deal with overplotting - situation when marks are so cluttered, that it is very hard to use the plot. There is also <a href=\"no-javascript.html\" id=\"SamplingBonus\">another way</a>.";
       if (this.effects["OverplottingTransp"]["on"] == this.effects["OverplottingTransp"]["initial_on"]) return;
       const m = this.currentSpec["mark"];
       if (this.effects["OverplottingTransp"]["on"]) {
-        if (m.hasOwnProperty("opacity")) this.currentSpec["mark"]["opacity"] = 0.2
+        if (m.hasOwnProperty("opacity")) this.currentSpec["mark"]["opacity"] = 0.24
         else {
           const type = m;
-          this.currentSpec["mark"] = {"type":m, "opacity": 0.2};
+          this.currentSpec["mark"] = {"type":m, "opacity": 0.24};
         }
       }
       else {
