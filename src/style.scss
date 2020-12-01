@@ -25,15 +25,17 @@ body {
   color: $text-color;
   background: $background-color;
   font-family: Georgia, serif;
-  font-size: 1vw;
+  font-size: 0.8vw;
 }
 
 .global_div {
   text-align: center;
-  width: 85%;
+  width: 70%;
   margin: auto;
+  margin-top: 2%;
   background-color: $div-background-color;
-  padding-bottom: 15%;
+  padding-bottom: 2.4%;
+  padding-top: 0.1%;
   border-radius: 15px;
 }
 .intro {
