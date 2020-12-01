@@ -20,6 +20,10 @@ h3 {
   margin: 3px;
 }
 
+.footer{
+  color: #BBBBBB;
+  transition: opacity 1s ease-in-out;
+}
 
 body {
   color: $text-color;
@@ -34,7 +38,7 @@ body {
   margin: auto;
   margin-top: 2%;
   background-color: $div-background-color;
-  padding-bottom: 2.4%;
+  padding-bottom: 1.0%;
   padding-top: 0.1%;
   border-radius: 15px;
   transition: width, height 2.5s ease-in-out;

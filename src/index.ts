@@ -406,10 +406,14 @@ function updateFeedback(message : string, oldScore : number,  score : number, ma
   }
 }
 
+document.addEventListener('keypress', (event) => {
+  firstLaunch = false});
+
 (document.getElementById("vega_spec") as HTMLInputElement).value = '{"$schema"\:"https://vega.github.io/schema/vega-lite/v3.json"\,"data"\:{"url"\:"cars.json"}\,"mark"\:"circle"\,"encoding"\:\{\n      "color"\:\{"type"\:"nominal"\,"field":"Origin"\,\n                    "scale"\:\{"scheme"\:"bluepurple"\}\}\,\n      "x"\:\{"type"\:"quantitative"\,\n             "field"\:"Weight_in_lbs"}\,\n      "y"\:{"type"\:"quantitative"\,\n             "field"\:"Horsepower"\,\n             "scale"\:{"zero"\:true\}\}\}\}';
 init_draco().then(() => {
    init_plots(false);
 }).then(()=>{
+  if (!firstLaunch) {quickStart(); return;}
   $(".sidebar").css("opacity",1);
   $("#heading").css("transition", "opacity 1s ease-in-out");
   $("#container-init").css("transition", "opacity 1s ease-in-out");
@@ -419,6 +423,7 @@ init_draco().then(() => {
   setTimeout(()=>{$("#subtext").css("opacity",1);}, 3200);
   $("#global_div").on("click",
                 ()=>{
+                      if (!firstLaunch) {quickStart(); return;}
                       $("#subtext").css("opacity",0);
                       smoothTextChange("We think it could be better...");
                       setTimeout(()=>{
@@ -431,9 +436,11 @@ init_draco().then(() => {
 });
 
 function setShowYours() {
+  if (!firstLaunch) {quickStart(); return;}
   $("#global_div").off();
   $("#global_div").on("click",
                         ()=>{
+                          if (!firstLaunch) {quickStart(); return;}
                           $("#subtext").css("opacity",0);
                           smoothTextChange("Set off on a journey to ...");
                           setTimeout(()=>{
@@ -449,9 +456,11 @@ function setShowYours() {
 }
 
 function setShowEffects() {
+  if (!firstLaunch) {quickStart(); return;}
   $("#global_div").off();
   $("#global_div").on("click",
                         ()=>{
+                          if (!firstLaunch) {quickStart(); return;}
                           $("#subtext").css("opacity",0);
                           smoothTextChange("... discover the space of possibilities");
                           setTimeout(()=>{
@@ -463,6 +472,9 @@ function setShowEffects() {
                             document.getElementById('openDataBtn').onclick = ()=> {openNav(); return false;};
                             $("#subtext").css("opacity",1);
                           },3600);
+                          setTimeout(()=>{
+                            smoothTextChange("Institute of Computer Graphics, Johannes Kepler University Linz, Austria, 2020",".footer");
+                          },4200);
                             $("#global_div").off();
                             firstLaunch = false;
                         }
@@ -473,4 +485,34 @@ function smoothTextChange(msg : string, id = "#heading"){
   $(id).css("opacity",0);
   setTimeout(()=>{$(id).html(msg);},1100);
   setTimeout(()=>{$(id).css("opacity",1);},1100);
+}
+
+function quickStart(){
+  $("#global_div").off();
+
+  $("#subtext").css("opacity",0);
+  smoothTextChange("... discover the space of possibilities");
+  $("#container-init").css("opacity",1);
+
+  $("#meter-container").css("transition", "opacity 2.0s ease-in-out");
+  $("#meter-container").css("opacity",1);
+
+  setTimeout(()=>{
+    $("#subtext").html("Play with this visualization or explore <a href=\"no-javascript.html\" id=\"openDataBtn\">your own</a>.");
+    $("#effects-div").css("transition", "opacity 2.0s ease-in-out");
+    $("#effects-div").css("opacity",1);
+  },1000);
+  setTimeout(()=>{
+    document.getElementById('openDataBtn').onclick = ()=> {openNav(); return false;};
+    $("#subtext").css("opacity",1);
+  },1200);
+
+  $(".grid-item.right").css("transition", "opacity 2.0s ease-in-out");
+  $(".grid-item.right").css("opacity",1);
+  $("#current").css("transition", "opacity 2.0s ease-in-out");
+  $("#current").css("opacity",1);
+
+  setTimeout(()=>{
+    smoothTextChange("Institute of Computer Graphics, Johannes Kepler University Linz, Austria, 2020",".footer");
+  },1500);
 }
