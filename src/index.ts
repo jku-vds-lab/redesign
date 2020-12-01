@@ -27,6 +27,7 @@ let numAvailableEffects: number;
 
 let samplingUnlocked = false;
 let samplingTried = false;
+let firstLaunch = true;
 
 const init_draco = async () => {
   draco_instance = await (new Draco().init());
@@ -296,7 +297,8 @@ function initGoodometer(numEffects : number) {
 
     left.setAttribute("class", "grid-item")
     middle.setAttribute("class", "grid-item")
-    right.setAttribute("class", "grid-item right")
+    if (firstLaunch) right.setAttribute("class", "grid-item right")
+    else right.setAttribute("class", "grid-item")
    
     const red = 79 + i/numEffects*(254 - 79);
     const green = 183 + i/numEffects*(224 - 183);
@@ -460,8 +462,9 @@ function setShowEffects() {
                           setTimeout(()=>{
                             document.getElementById('openDataBtn').onclick = ()=> {openNav(); return false;};
                             $("#subtext").css("opacity",1);
-                          },3000);
+                          },3600);
                             $("#global_div").off();
+                            firstLaunch = false;
                         }
                       )
 }

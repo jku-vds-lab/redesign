@@ -53,6 +53,7 @@ body {
 }
 .fields_container {
   max-height: 150px;
+  min-height: 150px;
   overflow: auto;
   margin-left: 20px;
   margin-bottom: 5px;
@@ -132,7 +133,6 @@ button {
   border-radius: 5px;
   background-color: $input-background-color;
   font-size: 0.8vw;
-  opacity: 0.0;
 }
 
 .sidebar .closeDataBtn {
