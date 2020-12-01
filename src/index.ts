@@ -414,6 +414,7 @@ document.addEventListener('keypress', (event) => {
 init_draco().then(() => {
    init_plots(false);
 }).then(()=>{
+  $("#vegaWork").hide();
   if (!firstLaunch) {quickStart(); return;}
   $(".sidebar").css("opacity",1);
   $("#heading").css("transition", "opacity 1s ease-in-out");
@@ -444,6 +445,7 @@ function setShowYours() {
                           if (!firstLaunch) {quickStart(); return;}
                           $("#subtext").css("opacity",0);
                           smoothTextChange("Set off on a journey to ...");
+                          $("#vegaWork").show();
                           setTimeout(()=>{
                             $(".grid-item.right").css("transition", "opacity 2.0s ease-in-out");
                             $(".grid-item.right").css("opacity",1);
@@ -508,6 +510,7 @@ function quickStart(){
     $("#subtext").css("opacity",1);
   },1200);
 
+  $("#vegaWork").show();
   $(".grid-item.right").css("transition", "opacity 2.0s ease-in-out");
   $(".grid-item.right").css("opacity",1);
   $("#current").css("transition", "opacity 2.0s ease-in-out");
