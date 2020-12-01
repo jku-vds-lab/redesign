@@ -37,9 +37,11 @@ body {
   padding-bottom: 2.4%;
   padding-top: 0.1%;
   border-radius: 15px;
+  transition: width, height 2.5s ease-in-out;
 }
-.intro {
+.subtext {
   text-align: center;
+  opacity: 0.0;
 }
 
 .effects-container {
@@ -62,13 +64,19 @@ body {
   width: 40%;
   overflow-x: auto;
   background-color: $div-background-color;
-}
+  min-height: 306px;
+  opacity: 0.0;
+}/*
+.Container.Init{
+  opacity: 0.0;
+}*/
 .meter-container {
   display : inline-block;
   vertical-align : top;
   width: 15%;
   overflow-x: auto;
   background-color: $div-background-color;
+  opacity: 0.0;
 }
 .Container-low {
   display : inline-block;
@@ -77,7 +85,13 @@ body {
   overflow-x: auto;
   background-color: $div-background-color;
   text-align: center;
+  min-height: 221px;
 }
+.Effects-DIV{
+  opacity: 0.0;
+  //transition: opacity 2s ease-in-out;
+}
+
 select {
   background-color: $input-background-color;
   color: $text-color;
@@ -86,7 +100,7 @@ select {
 textarea {
   background-color: $input-background-color;
   color: $text-color;
-  font-size: 1vw;
+  font-size: 0.8vw;
   border: none;
   width: 90%;
   max-height: 150px;
@@ -111,12 +125,14 @@ textarea {
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
   box-shadow: 5px 10px 8px #999999;
   text-align: center;
+  opacity: 0;
 }
 
 button {
   border-radius: 5px;
   background-color: $input-background-color;
-  font-size: 1vw;
+  font-size: 0.8vw;
+  opacity: 0.0;
 }
 
 .sidebar .closeDataBtn {
@@ -133,7 +149,10 @@ button {
   font-size: 25px;
   color: $text-color;
   display: block;
-  transition: 0.3s;
+  transition: 1s ease-in-out;
+}
+.middle_container{
+  opacity: 0;
 }
 
 .grid-container {
@@ -149,6 +168,10 @@ button {
   padding-bottom: 2px;
   text-align: center;
   min-height: 13px;
+}
+
+.grid-item.right{
+  opacity:0.0;
 }
 
 .sub-effect{
@@ -204,4 +227,9 @@ button {
 .feedback-container.pale-red {
   background-color: rgb(255, 245, 217);
   transition: background-color 3s;
+}
+
+.heading {
+  opacity: 0.0;
+  //transition: opacity 1s ease-in-out;
 }

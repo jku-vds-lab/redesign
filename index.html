@@ -21,36 +21,36 @@
             <button id="generateFromSpec" class="run_button"><b>Generate</b></button>
         </div>
     </div>
-    <div class="global_div">
-        <h1 id="heading">Worst-Yours-Best</h1>
-        <div class="intro">
-            How okay is this visualization? Could it be better?<br>Find out by applying/canceling various effects.<br>Improve this visualization ortry playing with your own.<br><br>
-        <button class="openDataBtn" id="openDataBtn">&#9776; Set your own visualization</button>
+    <div class="global_div" id="global_div">
+        <h1 id="heading" class="heading">Is this visualization okay?</h1>
+        <div class="subtext", id="subtext">
+            <i>(click anywhere to continue)</i><br>
+        <button class="openDataBtn0" id="openDataBtn0" hidden=true>&#9776; Set your own visualization</button>
         </div>
-        <div class="Container">
+        <div class="Container Init" id="container-init">
             <div>
-                <h2>Initial</h2>
+                <h2>Starting Point</h2>
             </div>
             <div class="vega_container">
                 <div id="vegaInit"></div>
             </div>
         </div>
-        <div class="meter-container">
+        <div class="meter-container" id="meter-container">
             <div>
                 <h2>Okay-Meter</h2>
             </div>
             <div class="grid-container" id="goodometer">
             </div>
         </div>
-        <div class="Container">
+        <div class="Container Yours" id="current">
             <div>
-                <h2>Yours</h2>
+                <h2>Current Point</h2>
             </div>
             <div class="vega_container">
                 <div id="vegaWork" ></div>
             </div>
         </div>
-        <div>
+        <div class="Effects-DIV" id="effects-div">
             <div>
                 <h2>Apply Effects for Better or Worse</h2>
             </div>

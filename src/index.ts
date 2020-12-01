@@ -234,13 +234,16 @@ const updatePlot = async (vegaId : string, spec = curVegaSpec) => {
 }
 // Sidebar
 function openNav() {
+  $(".middle_container").css("transition","opacity 0.5s ease-in-out");
   document.getElementById("data").style.width = "28%";
+  setTimeout(()=>{$(".middle_container").css("opacity",1);},310);
 }
 /* Set the width of the sidebar to 0 and the left margin of the page content to 0 */
 function closeNav() {
-  document.getElementById("data").style.width = "0";
+  $(".middle_container").css("opacity",0);
+  setTimeout(()=>{document.getElementById("data").style.width = "0";},510);
 }
-document.getElementById('openDataBtn').addEventListener("click", openNav);
+//document.getElementById('openDataBtn').addEventListener("click", openNav);
 document.getElementById('closeDataBtn').addEventListener("click", closeNav);
 
 document.getElementById('generateFromData').addEventListener("click", ()=>{init_plots(true)});
@@ -293,7 +296,7 @@ function initGoodometer(numEffects : number) {
 
     left.setAttribute("class", "grid-item")
     middle.setAttribute("class", "grid-item")
-    right.setAttribute("class", "grid-item")
+    right.setAttribute("class", "grid-item right")
    
     const red = 79 + i/numEffects*(254 - 79);
     const green = 183 + i/numEffects*(224 - 183);
@@ -330,9 +333,11 @@ function updateScore(newScore: number, prefix = "R") {
     const el = document.getElementById(prefix+"score-"+i);
     if (i == newScore) {
       if (prefix == "R")
-        el.innerHTML = "← Yours";
+        //el.innerHTML = "← Current";
+        el.innerHTML = "←   You ";
       else
-        el.innerHTML = "Initial →";
+        //el.innerHTML = "Starting →";
+        el.innerHTML = "Start →";
     }
     else el.innerHTML = "";
   }
@@ -402,4 +407,67 @@ function updateFeedback(message : string, oldScore : number,  score : number, ma
 (document.getElementById("vega_spec") as HTMLInputElement).value = '{"$schema"\:"https://vega.github.io/schema/vega-lite/v3.json"\,"data"\:{"url"\:"cars.json"}\,"mark"\:"circle"\,"encoding"\:\{\n      "color"\:\{"type"\:"nominal"\,"field":"Origin"\,\n                    "scale"\:\{"scheme"\:"bluepurple"\}\}\,\n      "x"\:\{"type"\:"quantitative"\,\n             "field"\:"Weight_in_lbs"}\,\n      "y"\:{"type"\:"quantitative"\,\n             "field"\:"Horsepower"\,\n             "scale"\:{"zero"\:true\}\}\}\}';
 init_draco().then(() => {
    init_plots(false);
+}).then(()=>{
+  $(".sidebar").css("opacity",1);
+  $("#heading").css("transition", "opacity 1s ease-in-out");
+  $("#container-init").css("transition", "opacity 1s ease-in-out");
+  $("#subtext").css("transition", "opacity 1s ease-in-out");
+  setTimeout(()=>{$("#container-init").css("opacity",1);}, 600);
+  setTimeout(()=>{$("#heading").css("opacity",1);}, 1800);
+  setTimeout(()=>{$("#subtext").css("opacity",1);}, 3200);
+  $("#global_div").on("click",
+                ()=>{
+                      $("#subtext").css("opacity",0);
+                      smoothTextChange("We think it could be better...");
+                      setTimeout(()=>{
+                        $("#meter-container").css("transition", "opacity 2.0s ease-in-out");
+                        $("#meter-container").css("opacity",1);
+                        setShowYours();
+                      },1900);
+                      setTimeout(()=>{$("#subtext").css("opacity",1);}, 3500);
+                    }); 
 });
+
+function setShowYours() {
+  $("#global_div").off();
+  $("#global_div").on("click",
+                        ()=>{
+                          $("#subtext").css("opacity",0);
+                          smoothTextChange("Set off on a journey to ...");
+                          setTimeout(()=>{
+                            $(".grid-item.right").css("transition", "opacity 2.0s ease-in-out");
+                            $(".grid-item.right").css("opacity",1);
+                            $("#current").css("transition", "opacity 2.0s ease-in-out");
+                            $("#current").css("opacity",1);
+                            setShowEffects();
+                          },2200);
+                          setTimeout(()=>{$("#subtext").css("opacity",1);}, 3500);
+                        }
+                      );
+}
+
+function setShowEffects() {
+  $("#global_div").off();
+  $("#global_div").on("click",
+                        ()=>{
+                          $("#subtext").css("opacity",0);
+                          smoothTextChange("... discover the space of possibilities");
+                          setTimeout(()=>{
+                            $("#subtext").html("Play with this visualization or explore <a href=\"no-javascript.html\" id=\"openDataBtn\">your own</a>.");
+                            $("#effects-div").css("transition", "opacity 2.0s ease-in-out");
+                            $("#effects-div").css("opacity",1);
+                          },2200);
+                          setTimeout(()=>{
+                            document.getElementById('openDataBtn').onclick = ()=> {openNav(); return false;};
+                            $("#subtext").css("opacity",1);
+                          },3000);
+                            $("#global_div").off();
+                        }
+                      )
+}
+
+function smoothTextChange(msg : string, id = "#heading"){
+  $(id).css("opacity",0);
+  setTimeout(()=>{$(id).html(msg);},1100);
+  setTimeout(()=>{$(id).css("opacity",1);},1100);
+}
