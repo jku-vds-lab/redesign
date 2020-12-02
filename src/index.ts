@@ -336,7 +336,7 @@ function updateScore(newScore: number, prefix = "R") {
     if (i == newScore) {
       if (prefix == "R")
         //el.innerHTML = "← Current";
-        el.innerHTML = "←   You ";
+        el.innerHTML = "← Yours ";
       else
         //el.innerHTML = "Starting →";
         el.innerHTML = "Start →";
