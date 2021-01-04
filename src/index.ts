@@ -406,7 +406,7 @@ function updateFeedback(message : string, oldScore : number,  score : number, ma
   }
 }
 
-document.addEventListener('keypress', (event) => {
+$(document).on("keypress",(event) => {
   firstLaunch = false;
   quickStart();});
 
@@ -479,6 +479,7 @@ function setShowEffects() {
                             smoothTextChange("Institute of Computer Graphics, Johannes Kepler University Linz, Austria, 2020",".footer");
                           },4200);
                             $("#global_div").off();
+                            $(document).off();
                             firstLaunch = false;
                         }
                       )
@@ -519,4 +520,6 @@ function quickStart(){
   setTimeout(()=>{
     smoothTextChange("Institute of Computer Graphics, Johannes Kepler University Linz, Austria, 2020",".footer");
   },1500);
+  $("#global_div").off();
+  $(document).off();
 }

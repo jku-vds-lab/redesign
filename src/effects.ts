@@ -252,7 +252,7 @@ export class Effector {
     }
 
     private Zero () {
-      const msg = "Without zero as a reference point it is much harder to compare values graphically. It usually exaggregates difference between values;";
+      const msg = "Without zero as a reference point it is much harder to compare values graphically. It usually exaggerates difference between values;";
       // if the effect was active initially an we are asked to activate it again
       // we return original user source regarding this effect, do nothing:
       if (this.effects["Zero"]["on"] == this.effects["Zero"]["initial_on"]) return;
