@@ -518,7 +518,7 @@ function quickStart(){
   $("#current").css("opacity",1);
 
   setTimeout(()=>{
-    smoothTextChange("Institute of Computer Graphics, Johannes Kepler University Linz, Austria, 2020",".footer");
+    smoothTextChange("Institute of Computer Graphics, Johannes Kepler University Linz, Austria, 2021",".footer");
   },1500);
   $("#global_div").off();
   $(document).off();

@@ -125,7 +125,7 @@ export class Effector {
     // available effects
     Sampling() {
       const newDataLen = (this.dataSummary["size"] as number)/ 4;
-      this.latestFeedback["Sampling"] = "Sampling can be used to alleviate overplotting when it is acceptable to display only subset of datapoints shownig only approximate shape of their distribution.";
+      this.latestFeedback["Sampling"] = "Sampling can be used to alleviate overplotting when it is acceptable to display only subset of data points showing only approximate shape of their distribution.";
       if (this.effects["Sampling"]["on"] == this.effects["Sampling"]["initial_on"]) return;
       if (this.currentSpec.hasOwnProperty("transform")) {
         //console.log("transform in place ", this.currentSpec["transform"])
@@ -317,7 +317,7 @@ export class Effector {
     }
 
     private ColorSeqNominal() {
-      const msg = "Sequential color scheme assumes some order of elements even if it represents a nominal attribute. In most cases it may lead to false judgements being drawn from the visualization.<br>So use <a href='https://vega.github.io/vega/docs/schemes/#scheme-properties'>categotical color schemes<a> for nominal attributes (ones with unordered values).";
+      const msg = "Sequential color scheme assumes order of elements even if it represents a nominal attribute. It may lead to false judgements being drawn from the visualization.<br>Use <a href='https://vega.github.io/vega/docs/schemes/#scheme-properties'>categorical color schemes<a> for nominal attributes (ones with unordered values).";
       if (this.effects["ColorSeqNominal"]["on"] == this.effects["ColorSeqNominal"]["initial_on"]) return;
       if (this.effects["ColorSeqNominal"]["on"]) {
         this.currentSpec["encoding"]["color"]["scale"]["scheme"] = "reds";
