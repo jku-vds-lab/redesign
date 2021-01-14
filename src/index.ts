@@ -536,6 +536,6 @@ function quickStart(){
 "field":"party"},
 "color":{"type":"nominal", "field":"party", "scale":{"scheme":"bluepurple"}},
 "x":{"type":"quantitative",
-"field":"electors_IQ",
+"field":"average_electors_IQ",
 "scale":{"zero":true}}}}
 */
