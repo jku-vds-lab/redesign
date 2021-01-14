@@ -527,3 +527,15 @@ function quickStart(){
   $("#global_div").off();
   $(document).off();
 }
+
+/*
+{"$schema":"https://vega.github.io/schema/vega-lite/v3.json",
+"data":{"url":"parties.json"},
+"mark":"bar",
+"encoding":{"y":{"type":"ordinal",
+"field":"party"},
+"color":{"type":"nominal", "field":"party", "scale":{"scheme":"bluepurple"}},
+"x":{"type":"quantitative",
+"field":"count",
+"scale":{"zero":true}}}}
+*/
