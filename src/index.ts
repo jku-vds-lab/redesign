@@ -244,6 +244,10 @@ function closeNav() {
   $(".middle_container").css("opacity",0);
   setTimeout(()=>{document.getElementById("data").style.width = "0";},510);
 }
+
+
+
+
 //document.getElementById('openDataBtn').addEventListener("click", openNav);
 document.getElementById('closeDataBtn').addEventListener("click", closeNav);
 
@@ -260,11 +264,11 @@ document.getElementById('Sampling').addEventListener("click", ()=>{
   let msg : string;
   const oldScore = effector.currentScore;
   if ((document.getElementById(effect)as HTMLInputElement).checked) {
-    if (!samplingTried) {
+    /*if (!samplingTriedfalse) {
       effector.deactivateEffect("OverplottingTransp");
       (document.getElementById("OverplottingTransp")as HTMLInputElement).checked = false;
       samplingTried = true;
-    }
+    }*/
     msg = effector.activateEffect(effect);
   }
   else msg = effector.deactivateEffect(effect);
@@ -377,7 +381,7 @@ function updateFeedback(message : string, oldScore : number,  score : number, ma
     (document.getElementById("OverplottingTransp") as HTMLInputElement).checked) {
       $("#OverplottingTranspSubBox").addClass("yellow");
       $("#SamplingBox").addClass("yellow");
-      warn = "<br><br><div class=\"sub-effect yellow\">Using sampling and opacity together would require to manually adjust sampling rate and opacity value.<br>Othervise your plot may lack definition.</div>";
+      warn = "<br><br><div class=\"sub-effect yellow\">Using Sampling and Low Marks Opacity together would require to manually adjust sampling rate and opacity value.<br>Otherwise your plot may lack definition.</div>";
     }
   else {
     $("#OverplottingTranspSubBox").removeClass("yellow");
