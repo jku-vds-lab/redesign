@@ -1,26 +1,26 @@
 [
 	{
 		"party": "Union",
-		"count": 101
+		"electors IQ": 101
 	},
 	{
 		"party": "SPD",
-		"count": 100
+		"electors IQ": 100
 	},
 	{
 		"party": "AfD",
-		"count": 93
+		"electors IQ": 93
 	},
 	{
 		"party": "FDP",
-		"count": 103
+		"electors IQ": 103
 	},
 	{
 		"party": "Linke",
-		"count": 105
+		"electors IQ": 105
 	},
 	{
 		"party": "Grüne",
-		"count": 99
+		"electors IQ": 99
 	}
 ]
