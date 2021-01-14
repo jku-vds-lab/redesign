@@ -1,26 +1,26 @@
 [
 	{
 		"party": "Union",
-		"electors_IQ": 101
+		"average_electors_IQ": 101
 	},
 	{
 		"party": "SPD",
-		"electors_IQ": 100
+		"average_electors_IQ": 100
 	},
 	{
 		"party": "AfD",
-		"electors_IQ": 93
+		"average_electors_IQ": 93
 	},
 	{
 		"party": "FDP",
-		"electors_IQ": 103
+		"average_electors_IQ": 103
 	},
 	{
 		"party": "Linke",
-		"electors_IQ": 105
+		"average_electors_IQ": 105
 	},
 	{
 		"party": "Grüne",
-		"electors_IQ": 99
+		"average_electors_IQ": 99
 	}
 ]
