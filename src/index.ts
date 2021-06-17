@@ -5,7 +5,7 @@ import embed from 'vega-embed';
 import * as $ from 'jquery';
 import { randomNormal } from 'd3';
 
-document.title = 'Worst-Yours-Best';
+document.title = 'GraphTrain';
 
 let draco_instance: Draco;
 let effector: Effector;
