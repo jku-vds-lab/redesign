@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>loading...</title>
+</head>
+
+<body id="body">
+    <div id=data class="sidebar">
+        <a href="javascript:void(0)" class="closeDataBtn" id="closeDataBtn">&times;</a>
+        <div class="middle_container">
+            <h2>Construct Initial Visualization:</h2>
+            <label for="selectData">Select data set and fields: </label>
+            <select id="selectData" disabled></select>
+            <div class="fields_container">
+            <form id="fields"></form></div>
+            <button id="generateFromData" class="run_button" disabled>Generate</button>
+            <h2>Or paste a VegaLite spec:</h2>
+            <textarea id="vega_spec" class="vega_spec" rows="20" cols="35"></textarea>
+            <button id="generateFromSpec" class="run_button">Generate</button>
+        </div>
+    </div>
+    <div class="global_div" id="global_div">
+        <h1 id="heading" class="heading">Is this visualization okay?</h1>
+        <div class="subtext", id="subtext">
+            <i>(click anywhere to continue)</i><br>
+        </div>
+        <div class="Container Init" id="container-init">
+            <div>
+                <h2>Starting Point</h2>
+            </div>
+            <div class="vega_container">
+                <div id="vegaInit"></div>
+            </div>
+        </div>
+        <div class="meter-container" id="meter-container">
+            <div>
+                <h2>Okay-Meter</h2>
+                <span><p>Score:</p></span>
+            </div>
+            <div class="grid-container" id="goodometer">
+            </div>
+        </div>
+        <div class="Container Yours" id="current">
+            <div>
+                <h2>Current Point</h2>
+            </div>
+            <div class="vega_container">
+                <div id="vegaWork" ></div>
+            </div>
+        </div>
+        <div class="Effects-DIV" id="effects-div">
+            <div>
+                <h2>Apply Effects for Better or Worse</h2>
+            </div>
+            <div class="Container-low">
+                <div class="effects-container">
+                    <div hidden=true><input type="checkbox" id="RedGrid" name="RedGrid" ><label for="RedGrid">Red Grid lines</label><br></div>
+                    <div hidden=true><input type="checkbox" id="BrightBackground" name="BrightBackground"><label for="BrightBackground">Bright Background</label><br></div>
+                    <div id = "ZeroBox" hidden=true class="effect-box">
+                        <div class="sub-effect"><input type="checkbox" id="Zero" name="Zero"><label for="Zero">Force Zero into Quantitative Ranges on Axes</label><br></div></div>
+                    <div id = 'ColorSeqNominalBox' hidden=true class="effect-box">
+                        <div class="sub-effect"><input type="checkbox" id="ColorSeqNominal" name="ColorSeqNominal"><label for="ColorSeqNominal">Apply Sequential Color Scheme</label><br></div></div>
+                    <div id = 'OverplottingTranspBox' hidden=true class="effect-box">
+                        <div id = "OverplottingTranspSubBox" class="sub-effect"><input type="checkbox" id="OverplottingTransp" name="OverplottingTransp"><label for="OverplottingTransp">Set Low Opacity of the Marks</label><br></div>
+                    
+                        <div id = "SamplingBox" hidden=true class="sub-effect"><input type="checkbox" id="Sampling" name="Sampling"><label for="Sampling">Sample 25% of the Data</label><br></div></div>
+                    <div id = "WallpaperBox" hidden=true class="effect-box">
+                        <div class="sub-effect"><input type="checkbox" id="Wallpaper" name="Wallpaper" ><label for="Wallpaper">Add Subtle Texture as a Wallpaper</label><br></div></div>
+                    <div id = "RoundBarsBox" hidden=true class="effect-box">
+                        <div class="sub-effect"><input type="checkbox" id="RoundBars" name="RoundBars"><label for="RoundBars">Apply Round Corners to Bars</label><br></div></div>
+                </div>
+            </div>
+            <div class="Container-low">
+                <div id="feedback-container" class="feedback-container">
+                    <h3>Feedback</h3>
+                    <p id="feedback">
+                        Feedback on your actions is going to appear here. Try turning a few effects on or off and see what happens.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <span><p class="footer">press any key to skip introduction</p></span>
+    </div>
+    <!-- ------------------------------------------------------------------------------------ -->
+    <script src="bundle.js"></script> <!-- bundle.js = filename assigned in webpack.config.js -->
+</body>
+
+</html>
