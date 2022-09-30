@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@types/jquery": "^3.5.3",
-    "d3": "^5.15.0",
+    "d3": "^7.6.1",
     "d3-fetch": "^1.1.2",
     "draco-vis": "latest",
     "file-system": "^2.2.2",
